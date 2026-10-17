@@ -150,7 +150,7 @@ Include the full circle extrema `cx +/- R`, `cy +/- R` plus station bounds and m
 | Focal station | At most one: `accent-tint` fill, `accent` stroke; station name uses the dark semantic text color |
 | Ring flow | Circular `A R R 0 0 1` arcs on the station circle, solid `muted` stroke, default arrowhead at the destination; clockwise only |
 | Write-back spoke | Dashed `soft` stroke at reduced emphasis, `stroke-dasharray="5,4"`, with a `soft` arrowhead |
-| Spoke label | `arrow-label` role, `muted`, uppercase, paper mask, 6–10px clear of the connector |
+| Spoke label | `arrow-label` role, `muted`, paper mask, 6–10px clear of the connector |
 
 Draw in this order: white background → ring arrows → dashed spokes → spoke-label masks and labels → station boxes → hub → text. Keep paths and marker tips outside the nodes with the specified clearance.
 

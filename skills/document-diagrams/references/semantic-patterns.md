@@ -26,9 +26,9 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Complexity budget:** ≤5 sources, ≤5 queue slots, one bottleneck, two outcomes, and ≤9 primary nodes. Aggregate excess sources as a named cohort.
 
-**Anti-patterns:** Equal-width pipeline that hides contention; arrows merged before they can be traced; capacity implied only by box size; decorative pile-up; animation that changes item order; red alone meaning overloaded.
+**Anti-patterns:** Equal-width pipeline that hides contention; arrows merged before they can be traced; capacity implied only by box size; decorative pile-up; reordered items; red alone meaning overloaded.
 
-**Static fallback:** Show the representative final queue, numeric count/capacity, bottleneck label, and both outcome paths. A still must reveal why work waits.
+**Static composition:** Show the representative final queue, numeric count/capacity, bottleneck label, and both outcome paths. A still must reveal why work waits.
 
 **Nearest visual type:** **Data flow** by default; use **Process** when service stages, rather than sources, dominate.
 
@@ -42,7 +42,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** Each stage invents a different internal layout; slot meaning encoded by position with no labels; fake precision from dozens of cells; confusing stage order with ownership lanes; shrinking text to keep one canvas.
 
-**Static fallback:** Render the full stage × slot matrix with handoffs and explicit `—` or `Not applicable` entries. Do not depend on staged reveal to teach the schema.
+**Static composition:** Render the full stage × slot matrix with handoffs and explicit `—` or `Not applicable` entries. Do not depend on staged reveal to teach the schema.
 
 **Nearest visual type:** **Process**; use **Swimlane** only when the repeated rows represent owners rather than semantic slots.
 
@@ -54,9 +54,9 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Complexity budget:** ≤4 exchanges, ≤6 artifact fields, one transformation, and ≤3 provenance links. Show representative content, not a transcript.
 
-**Anti-patterns:** “AI magic” sparkle between two boxes; artifact shown as another chat bubble; fields appearing without sources; inventing certainty for missing facts; typing animation as the only readable copy.
+**Anti-patterns:** “AI magic” sparkle between two boxes; artifact shown as another chat bubble; fields appearing without sources; inventing certainty for missing facts; missing or partial readable copy.
 
-**Static fallback:** Show a short source excerpt beside the completed labeled artifact, with at least one provenance mapping and any unknown fields visible.
+**Static composition:** Show a short source excerpt beside the completed labeled artifact, with at least one provenance mapping and any unknown fields visible.
 
 **Nearest visual type:** **Data flow**; use **Process** when elicitation has several ordered gates.
 
@@ -70,7 +70,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** Comparing two independently ordered flows; green/red dots without words; treating skipped and not-reached as synonyms; highlighting every difference; continuing a denied trace as if downstream rules ran.
 
-**Static fallback:** Show all rule states and both outcomes at once; use a persistent bracket/line and label for the first divergence.
+**Static composition:** Show all rule states and both outcomes at once; use a persistent bracket/line and label for the first divergence.
 
 **Nearest visual type:** **Flowchart** for ordered decision logic; use **Sequence** only when messages between actors and time are also load-bearing.
 
@@ -84,7 +84,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** Dashed box called “security” with no route semantics; forbidden arrow crossing into the protected zone; secrets or identity implied but unlabeled; every component styled as trusted; a bypass path that visually rejoins the approved route.
 
-**Static fallback:** Render every boundary and both permitted/forbidden routes. Blocked paths must visibly stop before entry or deployment.
+**Static composition:** Render every boundary and both permitted/forbidden routes. Blocked paths must visibly stop before entry or deployment.
 
 **Nearest visual type:** **Architecture**.
 
@@ -98,7 +98,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** 35 tiny pills; grouping by vague themes instead of enforcement point; mixing aspirations with enforced controls; icons without control names; claiming defense-in-depth without showing surface coverage.
 
-**Static fallback:** Show the complete grouped catalog with surface headers and text labels for actor and enforcement timing; preserve gaps and exceptions.
+**Static composition:** Show the complete grouped catalog with surface headers and text labels for actor and enforcement timing; preserve gaps and exceptions.
 
 **Nearest visual type:** **Layer stack**; use **DP security matrix** when role permissions, not enforcement surfaces, are the dominant comparison.
 
@@ -112,7 +112,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** Implying the final layer makes risk zero; equal opaque slabs with no propagation; treating audit as prevention; shrinking shapes without numeric or verbal meaning; reversing prevention/detection/recovery order without explanation.
 
-**Static fallback:** Show the complete propagation chain: initial risk → mitigation → escaped risk at every layer → final residual risk and response.
+**Static composition:** Show the complete propagation chain: initial risk → mitigation → escaped risk at every layer → final residual risk and response.
 
 **Nearest visual type:** **Layer stack**; use **Nested** when containment boundaries, rather than ordered compensation, carry the meaning.
 
@@ -126,7 +126,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** Four-sided ICOM boxes with Input/Control/Output/Mechanism arrows on every side — that is IDEF0's grammar, not this pattern's, and it does not fit Tree's connector rules. Drawing input/output arrows between siblings or cousins — that is a dependency graph's job; route to that type instead if cross-block flow must be drawn. Verb-phrase block names — name the structural element, not an action; if a block is genuinely an activity, it likely belongs in a companion Flowchart or Swimlane diagram, not this tree. An ID badge with no matching `data-block-id`, or a rename not mirrored in the embedded metadata. Treating the visible diagram as the complete record — it is a bounded view; the embedded metadata is the source of truth for anything not drawn. Labeling the tree connector itself with an ID or name — Tree has no connector-label convention today and this pattern must not invent one.
 
-**Static fallback:** This pattern has no animated form — it is always static; bespoke interaction (click-to-expand, filter-by-ID) is out of this skill's scope entirely . Every ID badge, block name, and any shown port label must be legible in the single rendered frame.
+**Static composition:** Every ID badge, block name, and any shown port label must be legible in the single rendered frame.
 
 **Validation:** Run `python3 <skill-dir>/scripts/verify-block-registry.py <file.svg>` for this pattern. It checks nonempty unique block IDs, names, resolvable parent IDs and absence of parent cycles within each SVG. Keep referenced parents represented in that file, including context nodes when a hierarchy is split.
 
@@ -144,7 +144,7 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Anti-patterns:** Actor lifelines or message arrows disguised as phases; a request/response exchange that belongs in Sequence; every guard and event from the underlying implementation; interruption states placed on the primary rail; cancellation and failure collapsed into one color-only state; a retry loop with no labeled re-entry point.
 
-**Static fallback:** Show the complete primary rail, every supporting state, both terminal outcomes, and all labeled transitions in one frame. Position and band labels must distinguish progress, interruption/recovery, and termination without relying on color.
+**Static composition:** Show the complete primary rail, every supporting state, both terminal outcomes, and all labeled transitions in one frame. Position and band labels must distinguish progress, interruption/recovery, and termination without relying on color.
 
 **Nearest visual type:** **State Machine**. Use **Sequence** when actor messages or request timing carry the story; use ordinary **State Machine** without this pattern when dense transition logic and guards matter more than one subject's progress.
 

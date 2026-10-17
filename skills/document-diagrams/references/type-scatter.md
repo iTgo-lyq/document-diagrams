@@ -46,7 +46,7 @@ Not for: a third value that is really a category (use the focal accent or facet 
 - **Bound axis ticks:** every tick carries `data-tick` (axis) and `data-value` (the number it prints). 4–6 per axis at equal intervals, `arrow-label` role 10px, same placement as the parent.
 - **Paper underlay per bubble**, same radius, painted immediately beneath — the translucent fill must not show gridlines through itself, because the fill's job is to read as one solid area.
 - **Draw order: largest first.** A small bubble painted early is buried under a later giant and its area is unreadable. `verify-bubble.py` checks paint order on every overlapping pair.
-- **Labels:** the focal bubble plus at most 2–3 outliers a reader will look for, `arrow-label` role 10px small-caps on a paper mask, each bound to its bubble with `data-name`. Never all of them.
+- **Labels:** the focal bubble plus at most 2–3 outliers a reader will look for, `arrow-label` role 10px on a paper mask, each bound to its bubble with `data-name`. Never all of them.
 - **4px grid** applies to the designed constants — axis rules, gridlines, tick baselines, legend rows. Bubble centres and radii are data-scaled and exempt; snapping them would move the data.
 
 #### Colour
@@ -122,7 +122,7 @@ Not for: two variables (that is the parent scatter); comparing distributions acr
 - **One value axis, horizontal, at the parent's baseline** (`y=420` inside `0 0 1000 500`, plot margins left 80, right 40), with 4–6 bound ticks at equal intervals in the `arrow-label` role at 10px and **vertical gridlines only** — the swarm axis has no scale to grid, and a horizontal rule through the band would invite reading the packing offsets as values.
 - **Dot count: 20–300**, one dot per item, all at one radius (the shipped example uses `r=4`). Both ends of the budget are enforced by `scripts/verify-beeswarm.py`.
 - **Greedy dodge around a midline** (`y=230` in the shipped example): each dot takes the first free slot alternating above/below at a fixed pitch of `2r+2`. The dodge is packing, not data — any collision-free arrangement is legitimate, and the algorithm is not part of the contract.
-- **Labels: the focal dot plus the outliers a reader will look for, at most 6.** `arrow-label` role 10px small-caps on a paper mask, one tier per label, alternating sides of the band, each tied to its dot by an unbound hairline leader and bound to it with `data-name`.
+- **Labels: the focal dot plus the outliers a reader will look for, at most 6.** `arrow-label` role 10px on a paper mask, one tier per label, alternating sides of the band, each tied to its dot by an unbound hairline leader and bound to it with `data-name`.
 - **4px grid** applies to the designed constants — the axis rule, gridlines, tick baselines, legend rows. Dot positions are data-scaled on the value axis and packing-scaled on the swarm axis, and both are exempt; snapping them would move the data.
 
 #### Colour

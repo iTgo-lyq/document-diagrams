@@ -56,7 +56,7 @@ arrows:                             # explicit edges; styles bind to topology (s
 
 **Reserved field semantics:**
 - `lanes[k].key` — the 3-letter role chip text (e.g., `ADM`, `ENG`, `SCI`, `CON`). Used inside every node in that lane.
-- `lanes[k].name` — two-line lane label; both lines use the uppercase `eyebrow` role.
+- `lanes[k].name` — two-line lane label; both lines use the `eyebrow` role.
 - `steps[j].focal: true` — exactly **one** step may declare this. Header chip renders in accent.
 - `nodes[i].focal: true` — exactly **one** node may declare this. Renders with accent border (§5).
 - `nodes[i].chips` — data-type chips for the node. Either form accepted:
@@ -136,7 +136,7 @@ Per-step `color` override (§4): replaces the fill with `rgba(C, 0.20)` and the 
 
 ### 2.3 Lane labels
 
-Two-line `eyebrow` role label, both lines uppercase, fill muted:
+Two-line `eyebrow` role label, both lines in the secondary text role, fill muted:
 - Line 1 at `(lane_label_x, lane_y_mid(k) - 4)`
 - Line 2 at `(lane_label_x, lane_y_mid(k) + 8)`
 
@@ -288,7 +288,7 @@ Above 4 lanes or 6 steps: split into two diagrams (e.g., ingestion pipeline / an
 - **Diagonal arrows** — always horizontal-first, then vertical; single right-angle bend.
 - **`title` role for node titles** — node titles use the `node-name` role (technical context). Only the overall SVG heading uses the 16px `title` role.
 - **Accent on more than one node, one step, one arrow** — focal = one node + one step + one arrow, max.
-- **`node-name` role for role labels** — lane labels always use the uppercase `eyebrow` role (they are identifiers, not prose).
+- **`node-name` role for role labels** — lane labels always use the `eyebrow` role (they are identifiers, not prose).
 - **`color` override on a focal element** — ignored. Accent always wins.
 - **Custom-colored arrows** — arrows are topology-driven. Color on a node never spreads to its edges.
 - **Lane tints over-applied** — a tint on every lane reads as decoration, not signal. Apply to ≤1 lane.

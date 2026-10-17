@@ -8,9 +8,9 @@
 
 Vertical stack, top to bottom, for one persona:
 
-- **Stage headers** — 5 equal columns, 200px wide, 24px gutters (max 6 stages). Each column: an `eyebrow`-role 10px uppercase tracked eyebrow (`STAGE 1` … `STAGE 5`) over the stage name in the `node-name` role, 12px, weight 600, both centered on the column.
+- **Stage headers** — 5 equal columns, 200px wide, 24px gutters (max 6 stages). Each column: an `eyebrow`-role 10px eyebrow (`STAGE 1` … `STAGE 5`) over the stage name in the `node-name` role, 12px, weight 600, both centered on the column.
 - **Sentiment band (the differentiator)** — a 160px-tall plot area directly under the headers. 3 horizontal reference hairlines at `rule` 0.10 opacity mark the levels `HIGH` / `NEUTRAL` / `LOW` — `eyebrow` role 10px `muted`, anchored `end` in a 64px left margin. **Never emoji, never `writing-mode` vertical text for these labels.** A smooth `muted` 1.5px polyline runs through one `r=5` dot per stage, each value snapped to one of five ordinal levels (`HIGH`, `MED-HIGH`, `NEUTRAL`, `MED-LOW`, `LOW`) — only the three that are actually used need a labeled hairline. The trough stage's dot and its incoming segment are `accent`; everything else on the curve is `muted`.
-- **Content rows** — up to 3 labelled bands below the sentiment band, each with an `eyebrow`-role 10px uppercase row label sitting in the left margin (same column as the sentiment level labels, never rotated):
+- **Content rows** — up to 3 labelled bands below the sentiment band, each with an `eyebrow`-role 10px row label sitting in the left margin (same column as the sentiment level labels, never rotated):
   - `ACTIONS` — what the user does, `node-name` family 12px, one short line per stage.
   - `TOUCHPOINTS` — the surface the action happens on (email, app, docs…), `sublabel` role 10px `muted`.
   - An optional third row for a metric or owner, same treatment as touchpoints.

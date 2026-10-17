@@ -34,7 +34,7 @@ STATUSES = {"unchanged", "added", "removed", "changed", "moved", "rewired"}
 CSS_MOVES = re.compile(
     r"(?:^|[;{])\s*(?:-(?:webkit|moz|ms|o)-)?"
     r"(?:transform|translate|rotate|scale|x|y|cx|cy|r|rx|ry|d|"
-    r"offset(?:-(?:path|distance|position|anchor|rotate))?)\s*:", re.I)
+    r"marker(?:-(?:start|mid|end))?|offset(?:-(?:path|distance|position|anchor|rotate))?)\s*:", re.I)
 CSS_SIZE = re.compile(r"(?:^|[;{])\s*(?:width|height)\s*:", re.I)
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
 EPS = 1e-6
@@ -254,6 +254,32 @@ def endpoint_meets_port(points, bounds, source):
     return on_perimeter(port, bounds)
 
 
+def canonical_end_marker(node, markers):
+    """The endpoint offset assumes one canonical 6px-extending end marker."""
+    reference = re.fullmatch(r"url\(\s*(['\"]?)#([^'\"\s)]+)\1\s*\)", node.attrs.get("marker-end", ""))
+    if reference is None:
+        return False
+    matches = markers.get(reference.group(2), [])
+    if len(matches) != 1:
+        return False
+    marker = matches[0]
+    if marker.attrs.get("markerunits") != "userSpaceOnUse" or marker.attrs.get("orient") != "auto":
+        return False
+    try:
+        if any(number(marker.attrs.get(key, "")) != value for key, value in
+               {"markerwidth": 8, "markerheight": 8, "refx": 2, "refy": 4}.items()):
+            return False
+        if "viewbox" in marker.attrs and numbers(marker.attrs["viewbox"].replace(",", " "), 4) != (0, 0, 8, 8):
+            return False
+        shapes = [child for child in marker.children if child.tag not in {"title", "desc"}]
+        if len(shapes) != 1 or shapes[0].tag != "path":
+            return False
+        path = shapes[0].attrs.get("d", "").strip()
+        return path.endswith(("z", "Z")) and path_points(path[:-1]) == [(0, 0), (8, 4), (0, 8), (2, 4)]
+    except ValueError:
+        return False
+
+
 def selector_may_match(selector: str, node: Node) -> bool:
     """Conservative last-compound filter for CSS width/height on SVG objects.
 
@@ -349,6 +375,10 @@ def check_source(path: Path, source: str) -> list[str]:
             visible.add(node)
             visible.update(node.ancestors())
     for node in protected:
+        if any(node.attrs.get(key, "none") != "none" for key in ("marker-start", "marker-mid")):
+            fail(node, "architecture delta permits only an end marker")
+        if "marker-end" in node.attrs and node.attrs.get("data-kind") != "relationship":
+            fail(node, "marker-end must be explicit on a relationship path")
         if "transform" in node.attrs and node not in snapshots:
             fail(node, "only snapshot translations may transform verified geometry")
         inline = clean_css(node.attrs.get("style", ""))
@@ -386,6 +416,10 @@ def check_source(path: Path, source: str) -> list[str]:
             ):
                 fail(style, "CSS geometry overrides are unsupported on bounds")
 
+    markers = {}
+    for node in scanner.nodes:
+        if node.tag == "marker" and within(node, root):
+            markers.setdefault(node.attrs.get("id", ""), []).append(node)
     objects = []
     for node in scanner.nodes:
         if (node.tag == "path" and any(within(node, snapshot) for snapshot in snapshots)
@@ -444,6 +478,8 @@ def check_source(path: Path, source: str) -> list[str]:
             if "data-from" in node.attrs or "data-to" in node.attrs:
                 fail(node, "components cannot declare relationship endpoints")
         elif kind == "relationship":
+            if not canonical_end_marker(node, markers):
+                fail(node, "relationship requires a defined canonical filled marker-end (8x8, refX=2, refY=4, userSpaceOnUse)")
             obj.endpoints = (node.attrs.get("data-from", ""), node.attrs.get("data-to", ""))
             if not all(ID_RE.fullmatch(value) for value in obj.endpoints):
                 fail(node, "missing or malformed relationship endpoint ID")

@@ -10,7 +10,7 @@ The CSS geometry guard ignores comments; active transform declarations still fai
 - **Cell size:** 116px wide × 56px tall, gap 4px. Maximum grid: 6 columns × 5 rows within the viewBox; smaller grids scale the cells up to fill the space.
 - **Row count:** 3–7. Fewer → a table says it with less ink; more → the cells shrink below readability at the minimum viewBox width.
 - **Column count:** 3–8. Same constraint: 8 × 116 = 928px exceeds the available 800px at this viewBox, so either reduce columns or reduce cell width proportionally (minimum cell width 80px).
-- **Axes:** row labels right-aligned in the left gutter (`sublabel` role 10px, `text-anchor="end"`, x=148); column labels centered above each column (`sublabel` role 10px, `text-anchor="middle"`); axis titles in the `eyebrow` role 10px small-caps rotated/positioned in the margins.
+- **Axes:** row labels right-aligned in the left gutter (`sublabel` role 10px, `text-anchor="end"`, x=148); column labels centered above each column (`sublabel` role 10px, `text-anchor="middle"`); axis titles in the `eyebrow` role 10px rotated/positioned in the margins.
 - **Value text (optional):** `arrow-label` role 10px centered inside each cell. Choose `ink` or `paper` text by measuring the actual composited fill; use whichever reaches 4.5:1. Do not use a fixed opacity threshold to infer contrast.
 
 ### Cell pattern

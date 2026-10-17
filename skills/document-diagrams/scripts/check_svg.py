@@ -16,6 +16,16 @@ SVG = 'http://www.w3.org/2000/svg'
 URL = re.compile(r'url\(\s*[\'\"]?([^\'\")]+)', re.I)
 
 
+class SvgBuilder(ET.TreeBuilder):
+    def __init__(self):
+        super().__init__()
+        self.processing_instructions = []
+
+    def pi(self, target, data):
+        # XML declarations are handled by the XML parser, not this callback.
+        self.processing_instructions.append(target)
+
+
 def local_name(name):
     return name.rsplit('}', 1)[-1]
 
@@ -26,7 +36,10 @@ def check(path):
         source = path.read_text(encoding='utf-8')
         if re.search(r'<!DOCTYPE|<!ENTITY', source, re.I):
             return ['DTD and entity declarations do not belong in a standalone diagram']
-        root = ET.fromstring(source)
+        builder = SvgBuilder()
+        root = ET.fromstring(source, parser=ET.XMLParser(target=builder))
+        if builder.processing_instructions:
+            errors.append('processing instructions, including XML stylesheets, are outside standalone SVG')
     except (OSError, UnicodeError, ET.ParseError) as exc:
         return [str(exc)]
     if root.tag != f'{{{SVG}}}svg':

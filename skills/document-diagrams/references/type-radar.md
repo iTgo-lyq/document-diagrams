@@ -12,7 +12,7 @@
 - **Series polygon:** stroke 1.5px at the series color, fill the same color at `0.18` opacity. Stroke 1.8px on the focal series — a subtle weight bump.
 - **Vertex dots:** **only on the focal series**, `r=4` filled with the series color. Non-focal series are stroke-and-fill only. This is the load-bearing rule that keeps the chart readable at 4–5 series.
 - **Drawing order:** dots-pattern bg → grid rings → axis spokes → axis labels → scale ticks → non-focal series (smallest area first) → focal series → focal vertex dots → legend.
-- **Legend:** horizontal strip at the bottom (per the global rule). Swatch is a 16×8 rectangle (matches the polygon stroke+fill, not a circle), then the entity name. ~140px between entries. Optional italic tail on the right with the rationale (`"One accent. Position is the signal — color reserved for the recommended option."`).
+- **Legend:** horizontal strip at the bottom (per the global rule). Swatch is a 16×8 rectangle (matches the polygon stroke+fill, not a circle), then the entity name. ~140px between entries. Optional tail on the right with the rationale (`"One accent. Position is the signal — color reserved for the recommended option."`).
 
 ## Math
 
@@ -24,7 +24,7 @@ x = cx + (v / S) · R · cos(angle)
 y = cy + (v / S) · R · sin(angle)
 ```
 
-A series with values `[v0, v1, ..., v(N-1)]` becomes a `<polygon>` with `points="x0,y0 x1,y1 ..."`.
+A series with values `[v0, v1..., v(N-1)]` becomes a `<polygon>` with `points="x0,y0 x1,y1 ..."`.
 
 ### Pre-computed reference (N=5, cx=500, cy=240, R=160, S=10, integer-rounded)
 

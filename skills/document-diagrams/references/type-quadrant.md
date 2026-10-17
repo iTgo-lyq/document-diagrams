@@ -4,7 +4,7 @@
 
 ## Layout conventions
 - 2×2 grid. Axis lines: 1px ink cross through the center.
-- **Axis labels: Jobs-minimal.** One single word at each arrow tip — no glyphs baked into the label (no `↑` / `→` / `←` / `↓`), no parentheticals, no "HIGH / LOW" modifiers. `eyebrow` role at 10px regular weight, normally spaced, uppercase. Flank the arrow tips — never sit labels on top of the axis line. Shorten the arrow enough (~60–80px inside the viewBox edge) to leave breathing room for the labels beyond the tips.
+- **Axis labels: Jobs-minimal.** One single word at each arrow tip — no glyphs baked into the label (no `↑` / `→` / `←` / `↓`), no parentheticals, no "HIGH / LOW" modifiers. `eyebrow` role at 10px regular weight, normally spaced. Flank the arrow tips — never sit labels on top of the axis line. Shorten the arrow enough (~60–80px inside the viewBox edge) to leave breathing room for the labels beyond the tips.
 - Never label at the midpoint.
 - Items: small labeled dots (`r=4`) positioned in the quadrants. Labels 8–10px away; don't let labels cross axis lines.
 - accent on the "do first" item (typically top-right).
@@ -46,8 +46,8 @@ Use the shared visual palette, legend strip, 4px grid and complexity budget.
 - **Non-focal cells**: `store` treatment (`ink @ 0.04` fill, `muted @ 0.28` stroke).
 - **Cell title**: `node-name` role, 12px, weight 600, `ink`.
 - **Cell description**: `node-name` role, 12px, `muted`, 1–3 lines, left-aligned inside the cell.
-- **Corner tag**: `eyebrow` role, 10px, uppercase, normally spaced, `muted` (or `ink` on focal). Format: `NN · DIMENSION-A / DIMENSION-B` — the two axis-dimension words must match the axis labels exactly.
-- **Axis labels**: `eyebrow` role 10px **regular weight** (not bold), normally spaced, uppercase, `ink`. **One word per tip.** No arrow glyphs in the label, no `HIGH / LOW` parentheticals, no multi-line sublabels. The word itself *is* the label. Position labels *beyond* the arrow tips (not on the axis line):
+- **Corner tag**: `eyebrow` role, 10px, normally spaced, `muted` (or `ink` on focal). Format: `NN · DIMENSION-A / DIMENSION-B` — the two axis-dimension words must match the axis labels exactly.
+- **Axis labels**: `eyebrow` role 10px **regular weight** (not bold), normally spaced, `ink`. **One word per tip.** No arrow glyphs in the label, no `HIGH / LOW` parentheticals, no multi-line sublabels. The word itself *is* the label. Position labels *beyond* the arrow tips (not on the axis line):
   - Top tip: `text-anchor="middle"`, ~12px above the arrow tip
   - Bottom tip: `text-anchor="middle"`, ~20px below the arrow tip
   - Left tip: `text-anchor="end"`, ~12px left of the arrow tip, `dominant-baseline="middle"`

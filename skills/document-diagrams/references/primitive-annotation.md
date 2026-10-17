@@ -1,6 +1,6 @@
 # Annotation Callout (secondary aside)
 
-Use for editorial asides — the "italic pointer" that marks a detail without competing with the primary diagram grammar. Think marginalia: *"structure IS the index"*, *"no imports, no configuration"*.
+Use for editorial asides — the "annotation pointer" that marks a detail without competing with the primary diagram grammar. Think marginalia: *"structure IS the index"*, *"no imports, no configuration"*.
 
 ## Grammar
 

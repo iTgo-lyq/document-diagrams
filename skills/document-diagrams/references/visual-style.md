@@ -22,6 +22,8 @@ Use the installed platform fallback; do not download fonts. The default sizes ar
 
 Resolve reference placeholders before emitting SVG: `{title-size}` = `16`, `{node-size}` = `12`, `{secondary-size}` = `10`. The font-role placeholders `{node-name}`, `{sublabel}`, `{eyebrow}`, `{arrow-label}`, `{title}` and `{callout}` all use the stack above. Do not retain serif headings, italic-serif asides or a blanket monospace style. Use legible sizes at the actual display scale; enlarge the whole type ramp for presentation output instead of compressing text to make content fit.
 
+Preserve the supplied label casing and use normal spacing. Semantic notation remains intact: uppercase change codes such as `ADDED` and the italic abstract-class name in UML convey meaning, rather than decorative typography.
+
 ## Palette
 
 | Role | Value |

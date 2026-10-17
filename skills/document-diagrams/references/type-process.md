@@ -85,7 +85,7 @@ lane_y_mid(k)    = lane_y_top(k) + lane_h/2            # 76, 156, 236, 316, 396,
 lane_label_x     = label_col_w / 2                     # 70
 
 # Step / node centers
-step_cx(j)       = label_col_w + 8 + j * step_slot_w + node_w/2      # 198, 310, 422, ...
+step_cx(j)       = label_col_w + 8 + j * step_slot_w + node_w/2      # 198, 310, 422...
                                                                       # (8-px gutter inside content area)
 
 # Nodes
@@ -124,7 +124,7 @@ label_anchor     = (step_cx(j), 32)              # 8-px gap below chip
 - Per-step `color` override (§4): replaces the fill with `rgba(C, 0.20)` and the number fill with `C`.
 
 **Label** (the secondary text below the chip):
-- Renders `steps[j].label` (uppercased), anchored at `label_anchor`.
+- Renders `steps[j].label` (preserving the supplied label), anchored at `label_anchor`.
 - Font: the `eyebrow` role's system-font family at 10px, weight 500, ``, `text-anchor="middle"`.
 - Default fill: `muted`.
 - Focal fill: `accent`.
@@ -133,7 +133,7 @@ label_anchor     = (step_cx(j), 32)              # 8-px gap below chip
 
 ### 2.3 Lane labels
 
-One or two-line system-font label, all uppercase, normal letter spacing, font-size=10, fill muted. Centered at `(lane_label_x, lane_y_mid(k))`:
+One or two-line system-font label, normal letter spacing, font-size=10, fill muted. Centered at `(lane_label_x, lane_y_mid(k))`:
 - Single-line: anchored at `(lane_label_x, lane_y_mid(k) + 4)`
 - Two-line: lines at `(lane_label_x, lane_y_mid(k) - 4)` and `(lane_label_x, lane_y_mid(k) + 4)`
 

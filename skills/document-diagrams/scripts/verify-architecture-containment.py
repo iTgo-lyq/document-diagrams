@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the Architecture containment HTML contract using only the stdlib.
+"""Verify the Architecture containment SVG contract using only the stdlib.
 
 Checks unique IDs, resolving parents, no cycles, geometric containment,
 innermost-scope parents (only the outermost scope may omit data-parent),

@@ -89,7 +89,9 @@ class RuntimeTests(unittest.TestCase):
         self.run_helper('verify-heatmap.py', path)
         for bad, message in [
                 (source.replace('rgba(30,41,59,0.1)', 'rgba(59,130,246,0.1)'), 'found 2 focal cells'),
-                (source.replace(' data-focal="true"', ''), 'accent fill requires data-focal=true')]:
+                (source.replace(' data-focal="true"', ''), 'accent fill requires data-focal=true'),
+                (source.replace('rgba(59,130,246,0.2)', 'rgba(234,88,12,0.85)'), 'require accent blue RGB'),
+                (source.replace('rgba(30,41,59,0.1)', 'rgba(37,99,235,0.3)'), 'require ink RGB')]:
             with self.subTest(message=message):
                 path.write_text(bad)
                 result = subprocess.run(
@@ -104,13 +106,35 @@ class RuntimeTests(unittest.TestCase):
         path.write_text(source)
         self.run_helper('check_svg.py', path)
         self.run_helper('verify-polar.py', path)
-        for bad in [source.replace('data-polar-value="32"', 'data-polar-value="80"', 1),
-                    source.replace('</svg>', '<style>@import url(https://fonts.googleapis.com/css2);</style></svg>')]:
+        for bad, message in [
+                (source.replace('data-polar-value="32"', 'data-polar-value="80"', 1), 'linear endpoint outside tolerance'),
+                (source.replace('</svg>', '<style>@import url(https://fonts.googleapis.com/css2);</style></svg>'),
+                 'CSS stylesheet loading is forbidden')]:
             path.write_text(bad)
             result = subprocess.run(
                 [sys.executable, str(self.skill / 'scripts/verify-polar.py'), str(path)],
                 cwd=self.work, text=True, capture_output=True)
             self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertIn(message, result.stdout + result.stderr)
+
+    def test_processing_instructions_cannot_load_external_styles(self):
+        source = (ROOT / 'tests/fixtures/polar-static.svg').read_text()
+        instruction = '<?xml-stylesheet type="text/css" href="https://example.invalid/external.css"?>'
+        path = self.work / 'polar.svg'
+        for helper in ['check_svg.py', 'verify-polar.py']:
+            for valid in ['<?xml version="1.0"?>\n' + source,
+                          source.replace('</svg>', '<!-- ' + instruction + ' --></svg>')]:
+                path.write_text(valid)
+                self.run_helper(helper, path)
+            for bad in [instruction + source, source + instruction,
+                        source.replace('</svg>', instruction + '</svg>')]:
+                with self.subTest(helper=helper, position=bad.index(instruction)):
+                    path.write_text(bad)
+                    result = subprocess.run(
+                        [sys.executable, str(self.skill / 'scripts' / helper), str(path)],
+                        cwd=self.work, text=True, capture_output=True)
+                    self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                    self.assertIn('processing instructions', result.stdout + result.stderr)
 
     def test_template_arrows_clear_source_and_target(self):
         root = ET.parse(self.skill / 'assets/template.svg').getroot()
@@ -161,6 +185,27 @@ class RuntimeTests(unittest.TestCase):
                     cwd=self.work, text=True, capture_output=True)
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                 self.assertIn('clearance/tangent', result.stdout + result.stderr)
+
+    def test_delta_requires_the_marker_assumed_by_its_clearance(self):
+        source = (ROOT / 'tests/fixtures/delta-clearance.svg').read_text()
+        marker = 'marker-end="url(#delta-arrow)"'
+        variants = [
+            (source.replace(marker, ''), 'defined canonical filled marker-end'),
+            (source.replace(marker, 'marker-end="url(#missing)"'), 'defined canonical filled marker-end'),
+            (source.replace(marker, marker + ' marker-start="url(#delta-arrow)"'), 'only an end marker'),
+            (source.replace('refX="2"', 'refX="8"'), 'defined canonical filled marker-end'),
+            (source.replace('L2,4 z', 'L4,4 z'), 'defined canonical filled marker-end'),
+            (source.replace(marker, marker + ' style="marker-end:none"'), 'CSS geometry overrides'),
+        ]
+        path = self.work / 'delta.svg'
+        for bad, message in variants:
+            with self.subTest(message=message):
+                path.write_text(bad)
+                result = subprocess.run(
+                    [sys.executable, str(self.skill / 'scripts/verify-architecture-delta.py'), str(path)],
+                    cwd=self.work, text=True, capture_output=True)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn(message, result.stdout + result.stderr)
 
 
 if __name__ == '__main__':

@@ -133,3 +133,6 @@ It is **not** a browser renderer or a proof of the source system. Authors remain
 - Redrawing an edge to a different component while keeping its endpoint metadata unchanged.
 - Counting retained objects twice to justify dropping other objects from the comparison.
 - Treating this comparison as an executable migration plan. Ordering, rollback, availability, and data consistency need their own explanation.
+
+
+Declare `marker-end` explicitly on every relationship path and point it to the canonical filled marker in visual-style.md. Only an end marker is supported: omit `marker-start` and `marker-mid`. Marker placement through CSS or ancestor attributes is unsupported because the endpoint offsets assume this exact marker geometry.

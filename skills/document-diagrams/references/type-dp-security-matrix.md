@@ -95,7 +95,7 @@ viewBox_w        = left_pad + comp_col_w + comp_role_gap
                    # 4 roles → 12 + 208 + 12 + 592 + 48 + 48 = 920
 
 header_y         = 72
-row_y(k)         = 140 + k * row_stride                  # 140, 180, 220, ...
+row_y(k)         = 140 + k * row_stride                  # 140, 180, 220...
 rows_bottom      = row_y(n_components - 1) + row_h       # 8 rows → 456
 legend_y_top     = rows_bottom + 20                      # 476 for 8-row canonical
 viewBox_h        = legend_y_top + 44                     # 520 for 8-row canonical
@@ -215,7 +215,7 @@ Before emitting SVG, verify **every** item:
 
 ---
 
-## 10. Worked YAML — full inputs for `example-dp-security-matrix.svg`
+## 10. Worked YAML — complete inputs
 
 The complete inputs that map to the shipped canonical example. Every coordinate in that SVG is derivable from §2 applied to these inputs.
 
@@ -293,4 +293,4 @@ Run §2 with these inputs:
 - `role_col_x(j) = [232, 396, 560, 724]` ✓
 - Focal cell at `(row=5, col=3)` → rect `(724, 340, 148, 36)` with accent stroke 1.4 ✓
 
-A fresh generation from this YAML produces a diagram visually indistinguishable from the shipped `example-dp-security-matrix.svg`.
+Generate the SVG directly from this YAML using the layout formulas and shared visual specification.

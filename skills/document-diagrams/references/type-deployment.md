@@ -6,7 +6,7 @@
 
 Three nesting levels, outermost to innermost — reuses the containment grammar from `type-nested.md`, specialized for infrastructure:
 
-1. **Zone** — an environment or network boundary (`edge`, `prod / eu-west-1`, `data`). A large rect, `rx=8`, fill `ink @ 0.02`, stroke `ink @ 0.20` dashed `4,4`. An `eyebrow`-role 10px (or 7px for tight layouts) uppercase tracked label sits inside the top-left corner, on a paper-colored mask over the border. Zones are drawn **first** — before arrows and nodes — so labels and boxes paint over them (z-order: bg → zones → arrows → labels → nodes).
+1. **Zone** — an environment or network boundary (`edge`, `prod / eu-west-1`, `data`). A large rect, `rx=8`, fill `ink @ 0.02`, stroke `ink @ 0.20` dashed `4,4`. An `eyebrow`-role 10px label sits inside the top-left corner, on a paper-colored mask over the border. Zones are drawn **first** — before arrows and nodes — so labels and boxes paint over them (z-order: bg → zones → arrows → labels → nodes).
 2. **Infrastructure node** — a host, VM, pod, or managed service inside a zone. The §6 node-box pattern (SKILL.md; markup in [primitives-core.md](primitives-core.md#node-box--full-pattern)) at `rx=6`, with a rectangular type tag (`rx=2`, **not** a pill) carrying `POD` / `VM` / `MANAGED` / `CDN` in the top-left corner.
 3. **Artifact chip** — what is deployed onto that node. A small 24px-tall rect `rx=4`, fill `ink @ 0.05`, stroke `muted`, holding the image or service name in the `node-name` family at 12px (left-aligned) plus a `sublabel`-role 10px version tag (right-aligned, e.g. `v2.4.1`). A node can carry more than one chip (stacked with an 8px gap) when more than one artifact is co-located (a sidecar, for example).
 

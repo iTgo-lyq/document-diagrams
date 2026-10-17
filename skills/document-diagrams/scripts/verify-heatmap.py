@@ -20,7 +20,7 @@ Four invariants:
    same opacity (tolerance ±0.03 to absorb floating-point representation).
 
 3. ONE FOCAL MAX — at most one cell carries data-focal="true" or uses accent
-   fill (R >= 200, G <= 150, B <= 100). The focal accent is an editorial marker
+   fill (RGB 59, 130, 246). The focal accent is an editorial marker
    for the single cell whose story the figure is about; using it on more than one
    inverts the ink-ramp contract the rest of the figure depends on.
 
@@ -279,12 +279,14 @@ def parse_cells(source: str, errors: list[str] | None = None) -> list[dict]:
         width = _attr(attrs_str, "width")
         height = _attr(attrs_str, "height")
 
+        raw_rgb = _parse_color(fill)
         rm = RGBA_RE.search(fill)
         if rm:
             try:
                 r_ch = int(rm.group(1))
                 g_ch = int(rm.group(2))
                 b_ch = int(rm.group(3))
+                raw_rgb = (r_ch, g_ch, b_ch)
                 opacity = float(rm.group(4))
             except ValueError:
                 opacity = None
@@ -295,6 +297,10 @@ def parse_cells(source: str, errors: list[str] | None = None) -> list[dict]:
                     focal = True
                     if _attr(attrs_str, "data-focal") != "true" and errors is not None:
                         errors.append("accent fill requires data-focal=true")
+
+        expected_rgb = (59, 130, 246) if focal else (30, 41, 59)
+        if raw_rgb != expected_rgb and errors is not None:
+            errors.append("focal cells require accent blue RGB (59,130,246); non-focal cells require ink RGB (30,41,59)")
 
         cells.append(
             {

@@ -37,6 +37,14 @@ class PackagingTests(unittest.TestCase):
         )
         self.assertTrue(any("missing reference" in error for error in check_package(self.installed)))
 
+    def test_missing_bare_svg_resource_is_detected(self):
+        reference = self.installed / "references" / "example.md"
+        reference.write_text("Write <file.svg> using `assets/template.svg`.", encoding="utf-8")
+        self.assertEqual(check_package(self.installed), [])
+        reference.write_text("Copy the shipped `example-missing.svg`.", encoding="utf-8")
+        self.assertTrue(any("missing SVG resource example-missing.svg" in error
+                            for error in check_package(self.installed)))
+
     def test_source_text_is_not_in_skill_instructions(self):
         self.assertEqual(check_package(self.installed), [])
         (self.installed / "references" / "source.md").write_text(

@@ -197,6 +197,10 @@ class PolarParser(HTMLParser):
         self._category_stack: list[tuple[int, Category]] = []
         self._value_label_stack: list[tuple[int, ValueLabel]] = []
 
+    def handle_pi(self, data: str) -> None:
+        if data.split(None, 1)[:1] != ["xml"]:
+            self.parse_findings.append("processing instructions, including XML stylesheets, are forbidden")
+
     def _in_chart(self) -> bool:
         return self._chart is not None and self._chart_depth is not None
 
@@ -429,7 +433,7 @@ def _visibility_state(
 
 
 def check(path: Path) -> list[str]:
-    """Return all contract violations found in one HTML document."""
+    """Return all contract violations found in one SVG document."""
 
     parser = _parse(path)
     findings: list[str] = []

@@ -16,7 +16,7 @@
 
 - **Orientation:** stages as equal columns (left → right in narrative order), layers as labeled rows (top → bottom). No connector arrows in this version — that is swimlane territory.
 - **ViewBox:** `0 0 1280 720` for the minimal examples. Full editorial keeps the same SVG and adds cards.
-- **Left margin:** 96px for layer labels. system monospace 8px, uppercase, horizontal, `text-anchor="end"` at x=88. **Never** `writing-mode: vertical`.
+- **Left margin:** 96px for layer labels. secondary CJK system text at 10px, horizontal, `text-anchor="end"` at x=88. **Never** `writing-mode: vertical`.
 - **Stage grid:** 4–6 columns. The worked example is 5 × 208px with 16px gutters (`col_x = 96 + i·224`). Each header carries `data-stage` on a rect at the column origin; every cell in that column uses the same `x`.
 - **Layer order, top to bottom:**
   1. Physical evidence (optional) — 48px

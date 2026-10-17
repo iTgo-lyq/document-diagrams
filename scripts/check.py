@@ -23,6 +23,8 @@ SOURCE_TERMS = re.compile(
 TEXT_SUFFIXES = {".md", ".yaml", ".yml", ".json", ".svg", ".html", ".css", ".txt", ".py", ".js"}
 LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 RUNTIME_PATH = re.compile(r"(?<![\w/])(?:scripts/[\w-]+\.py|assets/[\w-]+\.svg|references/[\w-]+\.md)")
+SVG_NAME = re.compile(r"(?<![\w.<>-])((?:[\w.-]+/)*[A-Za-z0-9][\w.-]*\.svg)\b")
+SVG_PLACEHOLDERS = {"file.svg", "diagram.svg", "output.svg"}
 
 
 def check_links(document, boundary, allow_external=False):
@@ -52,6 +54,7 @@ def check_package(directory):
             errors.append(f"missing {required}")
     if not directory.is_dir():
         return errors
+    svg_names = {path.name for path in directory.rglob('*.svg') if path.is_file()}
 
     for path in sorted(directory.rglob("*")):
         relative = path.relative_to(directory)
@@ -79,6 +82,15 @@ def check_package(directory):
                 errors.append(f"{relative}: source attribution belongs in the repository README.md")
         if path.suffix == ".md":
             errors.extend(check_links(path, directory))
+            for target in SVG_NAME.findall(path.read_text(encoding="utf-8")):
+                name = Path(target).name
+                if name in SVG_PLACEHOLDERS or name.endswith('.drawio.svg'):
+                    continue
+                candidates = [(directory / target).resolve(), (path.parent / target).resolve()]
+                exists = (name in svg_names if '/' not in target else
+                          any(p.is_relative_to(directory) and p.is_file() for p in candidates))
+                if not exists:
+                    errors.append(f"{relative}: missing SVG resource {target}")
             for target in RUNTIME_PATH.findall(path.read_text(encoding="utf-8")):
                 if not (directory / target).is_file():
                     errors.append(f"{relative}: missing runtime resource {target}")

@@ -33,7 +33,7 @@ Define once in `<defs>` and use for fire-and-forget only:
 
 ## Combined fragments (`alt` / `opt` / `loop`)
 
-Use a rectangular **frame** that spans only the lifelines participating in the branch. Operator label uses the `eyebrow` role, uppercase, in a small tab at the top-left of the frame. Time still flows top→down inside the frame.
+Use a rectangular **frame** that spans only the lifelines participating in the branch. Operator label uses the `eyebrow` role, in a small tab at the top-left of the frame. Time still flows top→down inside the frame.
 
 ### Frame primitive (shared)
 

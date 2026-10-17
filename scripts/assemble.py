@@ -228,6 +228,35 @@ def finish_guidance(text):
     text = text.replace('same phase-band palette as the horizontals, §6.1', 'same phase-band palette as the horizontals')
     text = text.replace('header, diagram, summary cards, footer, live fonts', 'header, diagram, optional context, local system fonts')
     text = text.replace('page overflow, an unreachable clipped SVG, a missing local scroller, or a\n', '')
+    text = text.replace('system monospace 8px', 'secondary CJK system text at 10px')
+    text = text.replace(' (or 7px for tight layouts)', '')
+    lines = []
+    for line in text.splitlines():
+        # Casing of machine-readable change words and abstract-class notation
+        # carry semantics; decorative label typography does not.
+        semantic_case = any(s in line for s in ['uppercase change word', 'same uppercase word', 'Uppercase names (`X`'])
+        if not semantic_case:
+            line = line.replace('both lines uppercase', 'both lines in the secondary text role')
+            line = line.replace('(uppercased)', '(preserving the supplied label)')
+            line = re.sub(r'\b(?:all uppercase|uppercase|tracked|small-caps)(?:,? )?', '', line)
+            line = re.sub(r'\s+tracked(?=[.,])', '', line)
+        if 'abstract class' not in line:
+            line = line.replace('"italic pointer"', '"annotation pointer"')
+            line = re.sub(r'\b[Ii]talic ', '', line)
+        line = re.sub(r',\s*\.', '.', line)
+        line = re.sub(r'(?<=px) +\.', '.', line)
+        lines.append(line)
+    text = '\n'.join(lines) + '\n'
+    for extension in ['html', 'svg']:
+        text = text.replace(f'the moving component in `example-wardley.{extension}`', 'a moving component')
+        text = text.replace(f' — which is also what `example-line.{extension}` actually ships, the parent prose being stale on this point', '')
+        text = text.replace(f'A fresh generation from this YAML produces a diagram visually indistinguishable from the shipped `example-dp-security-matrix.{extension}`.', 'Generate the SVG directly from this YAML using the layout formulas and shared visual specification.')
+    text = re.sub(r'Worked YAML — full inputs for `example-[\w-]+\.(?:html|svg)`', 'Worked YAML — complete inputs', text)
+    text = re.sub(r'The YAML in §1 is the \*\*complete\*\* inputs definition for the shipped `example-medallion\.(?:html|svg)`\..*?(?=\n|$)', 'The YAML in §1 is the **complete** input definition. Derive coordinates from §2 and retain these inputs in an XML comment in the generated SVG for reproducibility.', text)
+    text = text.replace('**Static fallback:**', '**Static composition:**')
+    text = text.replace('animation that changes item order', 'reordered items')
+    text = text.replace('typing animation as the only readable copy', 'missing or partial readable copy')
+    text = re.sub(r"This pattern has no animated form.*?Every ID badge", 'Every ID badge', text)
     return text
 
 
@@ -325,10 +354,53 @@ def delta_clearance(text):
     return on_perimeter(port, bounds)
 
 
+def canonical_end_marker(node, markers):
+    """The endpoint offset assumes one canonical 6px-extending end marker."""
+    reference = re.fullmatch(r"url\\(\\s*(['\\\"]?)#([^'\\\"\\s)]+)\\1\\s*\\)", node.attrs.get("marker-end", ""))
+    if reference is None:
+        return False
+    matches = markers.get(reference.group(2), [])
+    if len(matches) != 1:
+        return False
+    marker = matches[0]
+    if marker.attrs.get("markerunits") != "userSpaceOnUse" or marker.attrs.get("orient") != "auto":
+        return False
+    try:
+        if any(number(marker.attrs.get(key, "")) != value for key, value in
+               {"markerwidth": 8, "markerheight": 8, "refx": 2, "refy": 4}.items()):
+            return False
+        if "viewbox" in marker.attrs and numbers(marker.attrs["viewbox"].replace(",", " "), 4) != (0, 0, 8, 8):
+            return False
+        shapes = [child for child in marker.children if child.tag not in {"title", "desc"}]
+        if len(shapes) != 1 or shapes[0].tag != "path":
+            return False
+        path = shapes[0].attrs.get("d", "").strip()
+        return path.endswith(("z", "Z")) and path_points(path[:-1]) == [(0, 0), (8, 4), (0, 8), (2, 4)]
+    except ValueError:
+        return False
+
+
 '''
     text = text.replace('def selector_may_match(', helper + 'def selector_may_match(')
     text = text.replace('not on_perimeter(obj.points[0 if index == 0 else -1], endpoint.bounds)',
                         'not endpoint_meets_port(obj.points, endpoint.bounds, index == 0)')
+    text = text.replace('r"offset(?:-', 'r"marker(?:-(?:start|mid|end))?|offset(?:-')
+    text = text.replace('    for node in protected:\n', '''    for node in protected:
+        if any(node.attrs.get(key, "none") != "none" for key in ("marker-start", "marker-mid")):
+            fail(node, "architecture delta permits only an end marker")
+        if "marker-end" in node.attrs and node.attrs.get("data-kind") != "relationship":
+            fail(node, "marker-end must be explicit on a relationship path")
+''')
+    text = text.replace('    objects = []\n', '''    markers = {}
+    for node in scanner.nodes:
+        if node.tag == "marker" and within(node, root):
+            markers.setdefault(node.attrs.get("id", ""), []).append(node)
+    objects = []
+''')
+    text = text.replace('        elif kind == "relationship":\n', '''        elif kind == "relationship":
+            if not canonical_end_marker(node, markers):
+                fail(node, "relationship requires a defined canonical filled marker-end (8x8, refX=2, refY=4, userSpaceOnUse)")
+''')
     return text.replace('drawn relationship endpoint does not meet component',
                         'relationship clearance/tangent does not resolve to component')
 
@@ -384,6 +456,7 @@ def main():
         if path.name == 'type-architecture-delta.md':
             text = text.replace("The path's start meets the source rectangle's perimeter and its end meets the target's perimeter, within 2px for stroke/arrow-cap rounding.",
                 "Use the filled marker from visual-style.md. Start 5px outside the source boundary port and end 11px before the target boundary port along the path tangent. The arrow tip then clears the target by 5px. The verifier projects each endpoint along its tangent back to its declared component perimeter, with 2px tolerance for rounding; a nearby but misdirected endpoint does not pass.")
+            text += '\nDeclare `marker-end` explicitly on every relationship path and point it to the canonical filled marker in visual-style.md. Only an end marker is supported: omit `marker-start` and `marker-mid`. Marker placement through CSS or ancestor attributes is unsupported because the endpoint offsets assume this exact marker geometry.\n'
         if path.name == 'type-quadrant.md':
             text = re.sub(r'same house skin \([^)]*\)', 'the same visual palette', text)
             text = re.sub(r'^- Sans-serif H1.*\n', '', text, flags=re.M)
@@ -526,6 +599,7 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
         text = text.replace('.html', '.svg').replace('HTML files', 'SVG files').replace('HTML file', 'SVG file')
         text = text.replace('HTML diagrams', 'SVG diagrams')
         text = text.replace('Architecture delta HTML contract', 'Architecture delta SVG contract')
+        text = text.replace('Architecture containment HTML contract', 'Architecture containment SVG contract')
         text = text.replace('see export-registry.md "What this never does"', 'the embedded metadata is independent of visible layout')
         if name == 'verify-dumbbell.py':
             a = text.index('2. NON-TEXT CONTRAST')
@@ -544,12 +618,27 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
             text = text.replace('from urllib.parse import urlsplit\n', '')
             text = re.sub(r'def _allowed_stylesheet\(href: str\) -> bool:.*?(?=\ndef _style_property)', 'def _allowed_stylesheet(href: str) -> bool:\n    return False  # Standalone SVG has no external stylesheet dependencies.\n\n', text, flags=re.S)
             text = text.replace('        paths = list(DEFAULT_PATHS)', '        print("Usage: verify-polar.py FILE.svg [FILE.svg ...]", file=sys.stderr)\n        return 2')
+            text = text.replace('    def _in_chart(self)', '''    def handle_pi(self, data: str) -> None:
+        if data.split(None, 1)[:1] != ["xml"]:
+            self.parse_findings.append("processing instructions, including XML stylesheets, are forbidden")
+
+    def _in_chart(self)''')
+            text = text.replace('one HTML document', 'one SVG document')
         if name == 'verify-heatmap.py':
             text = text.replace('Detect accent fill — warm reddish-orange. Works for both light and dark skins.', 'Detect the blue accent before alpha compositing.')
             text = text.replace('return r >= 200 and g <= 150 and b <= 100', 'return (r, g, b) == (59, 130, 246)')
+            text = text.replace('fill (R >= 200, G <= 150, B <= 100)', 'fill (RGB 59, 130, 246)')
             text = text.replace('(245, 245, 245)', '(255, 255, 255)')
             text = text.replace('underlay rather than assuming the light paper background. In dark heatmaps, the\n    underlay is the dark paper color (#1e293b), not #ffffff.', 'underlay, with white as the default background.')
             text = text.replace('elif _is_accent(r_ch, g_ch, b_ch):\n                    focal = True', 'elif _is_accent(r_ch, g_ch, b_ch):\n                    focal = True\n                    if _attr(attrs_str, "data-focal") != "true" and errors is not None:\n                        errors.append("accent fill requires data-focal=true")')
+            text = text.replace('        rm = RGBA_RE.search(fill)', '        raw_rgb = _parse_color(fill)\n        rm = RGBA_RE.search(fill)')
+            text = text.replace('                b_ch = int(rm.group(3))', '                b_ch = int(rm.group(3))\n                raw_rgb = (r_ch, g_ch, b_ch)')
+            text = text.replace('        cells.append(\n', '''        expected_rgb = (59, 130, 246) if focal else (30, 41, 59)
+        if raw_rgb != expected_rgb and errors is not None:
+            errors.append("focal cells require accent blue RGB (59,130,246); non-focal cells require ink RGB (30,41,59)")
+
+        cells.append(
+''')
         write('scripts/' + name, text)
     source = (ROOT / 'upstream/diagram-design/scripts/axonometry.py').read_text()
     # Projection and prism geometry only; skins and page builders are presentation.

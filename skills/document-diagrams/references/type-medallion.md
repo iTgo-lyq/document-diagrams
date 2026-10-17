@@ -183,7 +183,7 @@ The cubic geometry: anchor y = 80 (tier top), control y = 0 (top of viewBox). Cu
 
 **Label inside the arc:**
 - Anchored at `(arc_peak_x(k), arc_label_y)` = `((arc_src_x + arc_dst_x) / 2, 50)`.
-- `arrow-label` role at 10px with normal letter spacing, uppercase. Color matches the arrow stroke.
+- `arrow-label` role at 10px with normal letter spacing. Color matches the arrow stroke.
 - **No mask rect needed** — the cubic curve peaks at y ≈ 20 and the label sits at y=50, well below the curve. The label floats inside the open space *enclosed* by the arc, reading "X transforms into Y" with the arc itself as the visual frame.
 
 For shorter inter-tier gaps (if `tier_gap` is overridden below the default 16 px), the arc anchors `arc_inset` may need to shrink correspondingly to keep the arc visible.
@@ -275,10 +275,10 @@ Before emitting SVG, verify **every** item:
 - **Custom-colored arrows** — connectors are topology-driven; color on a tier never spreads to its edges.
 - **Path cards explaining tier semantics** — paths describe *write methods* (how data moves between tiers), not what each tier holds. If you find yourself writing "Raw stores …" in a path card, that content belongs in the Raw tier's fields.
 - **Missing `example_label` content** — every tier should show a concrete example payload (quarterly survey rows, customer records, claims, …). Without it the diagram becomes abstract and stops earning its space.
-- **Promotion arrow label longer than the tier-gap label mask** — keep labels to ≤ 14 chars in the uppercase `arrow-label` role. Long verbs ("CALCULATE & SUMMARIZE") break the rhythm; shorten to "AGGREGATE" or split into two diagrams.
+- **Promotion arrow label longer than the tier-gap label mask** — keep labels to ≤ 14 chars in the `arrow-label` role. Long verbs ("CALCULATE & SUMMARIZE") break the rhythm; shorten to "AGGREGATE" or split into two diagrams.
 
 ---
 
 ## 10. Worked YAML
 
-The YAML in §1 is the **complete** inputs definition for the shipped `example-medallion.svg`. Every coordinate in that file's SVG is derivable from §2 applied to those inputs. The same YAML is embedded as a top-of-file XML comment inside `example-medallion.svg` so source view shows the parametric inputs immediately above the SVG.
+The YAML in §1 is the **complete** input definition. Derive coordinates from §2 and retain these inputs in an XML comment in the generated SVG for reproducibility.
