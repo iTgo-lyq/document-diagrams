@@ -1,0 +1,6 @@
+[submodule "upstream/diagram-design"]
+	path = upstream/diagram-design
+	url = https://github.com/cathrynlavery/diagram-design.git
+[submodule "upstream/svg-diagram"]
+	path = upstream/svg-diagram
+	url = https://github.com/bybit-exchange/svg-diagram.git
