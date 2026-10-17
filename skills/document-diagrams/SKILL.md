@@ -240,7 +240,7 @@ Run before producing any diagram.
 - [ ] `viewBox` expanded for the legend strip (~60px)?
 - [ ] SVG dimensions preserve readable text at the intended display size, with all content inside the viewBox?
 - [ ] Node origins, dimensions, gaps, padding on the 4px grid; type sizes on the role ramp?
-- [ ] From the installed skill directory, did `python3 scripts/check_svg.py <file>` pass? (Accessible-SVG contract, single-file safety, content inside the viewBox, motion basics.)
+- [ ] From the installed skill directory, did `python3 scripts/check_svg.py <file>` pass? (XML syntax, accessible naming, unique IDs and local resource references; inspect geometry and rendered bounds separately.)
 
 **Visual check:**
 

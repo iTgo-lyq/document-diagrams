@@ -255,6 +255,7 @@ def svg_scope(text):
     text = text.replace('top-of-file HTML comment', 'top-of-file XML comment')
     text = re.sub(r'^\| \*\*Format\*\*.*\n', '', text, flags=re.M)
     text = text.replace('self_check.py', 'check_svg.py')
+    text = text.replace('Accessible-SVG contract, single-file safety, content inside the viewBox, motion basics.', 'XML syntax, accessible naming, unique IDs and local resource references; inspect geometry and rendered bounds separately.')
     text = text.replace('Complete static/no-JS', 'Complete static')
     text = re.sub(r'^.*\*\*`min-width` equals.*\n', '- [ ] SVG dimensions preserve readable text at the intended display size, with all content inside the viewBox?\n', text, flags=re.M)
     text = re.sub(r'^- \*\*Responsive presentation:\*\*.*$', '- **Display size:** preserve the three-panel comparison at a readable width. Do not compress labels or scale snapshots independently. Keep the complete comparison in the SVG viewBox.', text, flags=re.M)
