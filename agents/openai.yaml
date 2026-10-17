@@ -1,4 +1,0 @@
-interface:
-  display_name: "Document Diagrams"
-  short_description: "结合内容建模与浅色视觉，为技术需求文档生成清晰的中文 SVG 图文"
-  default_prompt: "使用 $document-diagrams，依据当前项目材料选择合适的 SVG 表达，并用正文补充条件和实现依据。"
