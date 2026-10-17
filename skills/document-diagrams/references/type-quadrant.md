@@ -63,7 +63,7 @@ Use the shared visual palette, legend strip, 4px grid and complexity budget.
 
 ### Anti-patterns (variant-specific)
 
-- Unnamed cells ("Scenario 1/2/3/4") in a shipped diagram — OK as a blank template; not OK as a finished artifact.
+- Unnamed cells ("Scenario 1/2/3/4") in a finished diagram — OK as a blank template; not OK as a finished artifact.
 - accent on more than one cell — same focal rule as everywhere else in the skill.
 - 3×3 or 2×3 grids — those are different diagrams, not this variant.
 - Positioning dots *inside* the cells — if position matters, use the standard quadrant.

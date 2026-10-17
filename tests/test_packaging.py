@@ -44,6 +44,11 @@ class PackagingTests(unittest.TestCase):
         reference.write_text("Copy the shipped `example-missing.svg`.", encoding="utf-8")
         self.assertTrue(any("missing SVG resource example-missing.svg" in error
                             for error in check_package(self.installed)))
+        reference.unlink()
+        helper = self.installed / "scripts" / "example.py"
+        helper.write_text('"""See the shipped example-missing.svg."""', encoding="utf-8")
+        self.assertTrue(any("missing example resource example-missing.svg" in error
+                            for error in check_package(self.installed)))
 
     def test_source_text_is_not_in_skill_instructions(self):
         self.assertEqual(check_package(self.installed), [])

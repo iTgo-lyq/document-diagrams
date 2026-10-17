@@ -167,7 +167,7 @@ node_x(j)    = zone_x + zone_pad_x + j * (node_w + 16)
 node_cx(j)   = node_x(j) + node_w/2
 ```
 
-For the canonical 3-node row: `node_w = (696 - 32 - 32) / 3 = 210.67`. The shipped example uses fixed `node_w=160` with custom x positions (`288, 480, 672`) chosen so each node's `cx` aligns to the column for connector convenience: 368, 560, 752. **Both layouts are valid**; the formula above is the default for new diagrams. Document any deviation in the rendered SVG with a comment.
+For the canonical 3-node row: `node_w = (696 - 32 - 32) / 3 = 210.67`. The illustrative example uses fixed `node_w=160` with custom x positions (`288, 480, 672`) chosen so each node's `cx` aligns to the column for connector convenience: 368, 560, 752. **Both layouts are valid**; the formula above is the default for new diagrams. Document any deviation in the rendered SVG with a comment.
 
 ### 2.3 Bar (full-zone-width) placement
 

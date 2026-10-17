@@ -25,6 +25,7 @@ LINK = re.compile(r"\[[^\]]*\]\(([^\s)]+)\)")
 RUNTIME_PATH = re.compile(r"(?<![\w/])(?:scripts/[\w-]+\.py|assets/[\w-]+\.svg|references/[\w-]+\.md)")
 SVG_NAME = re.compile(r"(?<![\w.<>-])((?:[\w.-]+/)*[A-Za-z0-9][\w.-]*\.svg)\b")
 SVG_PLACEHOLDERS = {"file.svg", "diagram.svg", "output.svg"}
+EXAMPLE_NAME = re.compile(r"\bexample-[\w-]+\.svg\b")
 
 
 def check_links(document, boundary, allow_external=False):
@@ -94,6 +95,10 @@ def check_package(directory):
             for target in RUNTIME_PATH.findall(path.read_text(encoding="utf-8")):
                 if not (directory / target).is_file():
                     errors.append(f"{relative}: missing runtime resource {target}")
+        if path.suffix in {".md", ".py"}:
+            for name in EXAMPLE_NAME.findall(path.read_text(encoding="utf-8")):
+                if name not in svg_names:
+                    errors.append(f"{relative}: missing example resource {name}")
     return errors
 
 

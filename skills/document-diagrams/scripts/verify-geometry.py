@@ -14,14 +14,13 @@ Paint order is what makes this a defect rather than a stylistic choice:
 * A mask overlapping a node declared *later* in the document is clipped by that
   node. That is the failure this check reports.
 
-Shape heuristics follow the shipped templates:
+Shape heuristics follow the SVG primitives:
 
 * A node is a `<rect>` at least 60x40 - large enough for a title and sublabel.
 * A label mask is a `<rect>` 20-200 wide and 8-14 tall - the masking plate that
   SKILL.md §6 prescribes (markup in references/primitives-core.md) for arrow
-  labels and zone eyebrows. The width cap covers the long mono plates shipped
-  in example-sequence-oauth.svg (128px) and the wider plates CJK labels need
-  at the same glyph count.
+  labels and zone eyebrows. The width cap covers long label plates (128px)
+  and the wider plates CJK labels need at the same glyph count.
 * A mask fully contained in a node is a badge chip (`EXT`, `EDGE`, `ORIG`) and
   is legal.
 

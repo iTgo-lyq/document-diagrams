@@ -217,7 +217,7 @@ Before emitting SVG, verify **every** item:
 
 ## 10. Worked YAML — complete inputs
 
-The complete inputs that map to the shipped canonical example. Every coordinate in that SVG is derivable from §2 applied to these inputs.
+Complete inputs for generating an SVG from this section. Every coordinate in that SVG is derivable from §2 applied to these inputs.
 
 ```yaml
 title:    "Platform Access Matrix"

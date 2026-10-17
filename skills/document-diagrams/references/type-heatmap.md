@@ -35,7 +35,7 @@ Every cell is two overlapping `<rect>` elements: a paper-fill underlay (no data 
 
 ## The fill ramp
 
-**One ink ramp, one accent.** Non-focal cells use a single tonal ramp: `rgba(INK, opacity)` where opacity is a non-decreasing function of the data value. The shipped example uses `opacity = max(0.07, value / max_non_focal × 0.65)`. Any monotone formula (linear, sqrt, log) passes the verifier as long as opacity never decreases with value.
+**One ink ramp, one accent.** Non-focal cells use a single tonal ramp: `rgba(INK, opacity)` where opacity is a non-decreasing function of the data value. The illustrative example uses `opacity = max(0.07, value / max_non_focal × 0.65)`. Any monotone formula (linear, sqrt, log) passes the verifier as long as opacity never decreases with value.
 
 **One focal cell only.** The accent marks the editorially focal cell — the one whose combination of row and column is the figure's argument. It is not the automatically highest value; choose the cell whose story the title is about. `data-focal="true"` is required; `scripts/verify-heatmap.py` counts all accent-fill and `data-focal` cells and fails if more than one is found.
 

@@ -257,6 +257,10 @@ def finish_guidance(text):
     text = text.replace('animation that changes item order', 'reordered items')
     text = text.replace('typing animation as the only readable copy', 'missing or partial readable copy')
     text = re.sub(r"This pattern has no animated form.*?Every ID badge", 'Every ID badge', text)
+    text = text.replace('The complete inputs that map to the shipped canonical example.', 'Complete inputs for generating an SVG from this section.')
+    text = text.replace('A shipped treemap once had its smallest cell drawn 50% oversized with every gate green for exactly this reason.', 'A small cell can be drawn 50% oversized while label-only checks pass for exactly this reason.')
+    text = text.replace('shipped grammar', 'supported grammar').replace('shipped diagram', 'finished diagram')
+    text = text.replace('shipped', 'illustrative')
     return text
 
 
@@ -600,6 +604,9 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
         text = text.replace('HTML diagrams', 'SVG diagrams')
         text = text.replace('Architecture delta HTML contract', 'Architecture delta SVG contract')
         text = text.replace('Architecture containment HTML contract', 'Architecture containment SVG contract')
+        if name == 'verify-geometry.py':
+            text = text.replace('Shape heuristics follow the shipped templates:', 'Shape heuristics follow the SVG primitives:')
+            text = text.replace('labels and zone eyebrows. The width cap covers the long mono plates shipped\n  in example-sequence-oauth.svg (128px) and the wider plates CJK labels need\n  at the same glyph count.', 'labels and zone eyebrows. The width cap covers long label plates (128px)\n  and the wider plates CJK labels need at the same glyph count.')
         text = text.replace('see export-registry.md "What this never does"', 'the embedded metadata is independent of visible layout')
         if name == 'verify-dumbbell.py':
             a = text.index('2. NON-TEXT CONTRAST')
