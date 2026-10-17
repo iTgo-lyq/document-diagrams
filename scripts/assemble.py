@@ -347,6 +347,7 @@ def main():
             duplicate = '## Visual primitives\n\nUse the white background and marker definitions in [visual-style.md](visual-style.md).\n\n'
             text = text.replace(duplicate + duplicate, duplicate)
             text = text.replace('the commented dotted-paper pattern, and ', '')
+            text = text.replace("The copied template already carries the background rect, all three arrow markers, so load this file when you need exact markup or a rule's edge cases.", 'The SVG template provides a white background and one default filled marker. Add required marker variants from visual-style.md. Load this file for primitive markup and connector edge cases.')
             text = re.sub(r'\*\*Font substitution\.\*\*.*?(?=\n\n)', '**Font substitution.** Estimate full-width CJK glyphs at about 1em, then check actual text bounds in the renderer. System font fallback affects width. Measure each label and keep padding; the geometry verifier checks masks against nodes but cannot prove that text fits.', text, flags=re.S)
             text = text.replace('≤14 characters, all-caps, centered on segment midpoint.', 'Short labels centered on the segment midpoint; size the mask for the actual glyphs.')
             text = text.replace('(sublabel role, mono)', '(sublabel role)')
@@ -396,6 +397,22 @@ def main():
             text = text.replace('(`0.16 → 0.10 → 0.05` on light paper, `0.14 → 0.09 → 0.04` on dark)', '(`0.16 → 0.10 → 0.05`)')
         if path.name == 'type-bar.md':
             text = re.sub(r'\*\*Non-text contrast:.*?(?=\n\n)', '**Non-text contrast:** measure dot outlines and connectors against the actual background; they must reach 3:1. Preserve hollow/solid endpoints in addition to color so the two states remain distinguishable in greyscale. Use the semantic palette and a contrasting outline instead of relying on tint alone.', text, flags=re.S)
+            text += '\n## Dumbbell rule verification\n\nRun `python3 <skill-dir>/scripts/verify-dumbbell.py` with no positional file argument. It checks the documented domain formula and palette contrast constants; it does not inspect an authored SVG. Check the actual SVG with check_svg.py and inspect its values, geometry and rendered contrast separately.\n'
+        if path.name == 'semantic-patterns.md':
+            text = text.replace('**Nearest visual type:** **Tree**', '**Validation:** Run `python3 <skill-dir>/scripts/verify-block-registry.py <file.svg>` for this pattern. It checks nonempty unique block IDs, names, resolvable parent IDs and absence of parent cycles within each SVG. Keep referenced parents represented in that file, including context nodes when a hierarchy is split.\n\n**Nearest visual type:** **Tree**')
+        if path.name == 'type-exploded.md':
+            text = text.replace(' Animated parts add `data-closed-z`.', '')
+            text = text.replace('<g data-exploded ', '<g data-exploded="" ')
+            text = text.replace('it stays correct throughout an explode', 'it remains correct in the static exploded view')
+            text = text.replace('Nothing is clipped at the closed frame either, because the closed object fits inside the exploded one.', 'The assembled geometry also fits inside these bounds.')
+        if path.name == 'type-axonometric-plan.md':
+            for flag in ['data-axo-plan', 'data-plate', 'data-box', 'data-room']:
+                text = re.sub(r'\b' + flag + r'(?=[ >])(?!\s*=)', flag + '=""', text)
+            text = text.replace('data-room="" data-name data-rect>', 'data-room="" data-name="NAME" data-rect="x0 y0 x1 y1 r">')
+            text = text.replace('data-role="tag" data-name data-at=', 'data-role="tag" data-name="NAME" data-at=')
+        if path.name == 'type-polar.md':
+            text = text.replace('The only external stylesheet allowed is Google Fonts.', 'External stylesheets and font downloads are forbidden. Declare the CJK system font stack with a `font-family` presentation attribute on the root SVG or text elements; this grammar does not permit a style element inside the chart.')
+            text += '\n## Verification\n\nRun `python3 <skill-dir>/scripts/verify-polar.py <file.svg>` to check the declared data, radial encoding, SVG allowlist and label bindings. Use check_svg.py as well for the common SVG contract.\n'
         if path.name == 'type-line.md':
             text = re.sub(r'Check the token you actually ship:.*?(?=\n)', 'Measure the actual stroke/background contrast; weight remains a redundant cue in greyscale.', text)
             text = re.sub(r'- \*\*Legend wording.*?(?=\n)', '- **Legend wording:** name the encoded quantity and its ordering; do not rely on color alone.', text)
@@ -477,7 +494,7 @@ Deliver a self-contained `.svg` file directly at the requested destination. Use 
 
 Follow the six-point [accessible SVG contract](references/primitives-core.md#accessible-svg-contract): role and naming attributes, title first, diagram-prefixed unique IDs, a short title, a content description, and hidden decorative-only symbols.
 
-Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>` and the chosen type's verifier with that SVG path. Inspect the rendered figure at the intended display width; automated checks cannot establish text fit, contrast, or factual correctness. Report material simplifications from an import alongside the file.
+Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen type and semantic pattern references for additional checks, using their documented arguments; some checks validate rule constants and do not accept an SVG path. Where no extra command is provided, use the reference's checklist. Inspect the rendered figure at the intended display width; automated checks cannot establish text fit, contrast, or factual correctness. Report material simplifications from an import alongside the file.
 ''')
     write('SKILL.md', svg_scope(finish_guidance(main_text)))
 
@@ -507,6 +524,7 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>` and the chosen type's 
         text = text.replace('the shipped Geist / Geist Mono faces', 'reference Latin faces (only an estimate for system-font fallback)')
         text = re.sub(r'skills/document-diagrams/assets/example-[\w-]+\.html', 'path/to/diagram.html', text)
         text = text.replace('.html', '.svg').replace('HTML files', 'SVG files').replace('HTML file', 'SVG file')
+        text = text.replace('HTML diagrams', 'SVG diagrams')
         text = text.replace('Architecture delta HTML contract', 'Architecture delta SVG contract')
         text = text.replace('see export-registry.md "What this never does"', 'the embedded metadata is independent of visible layout')
         if name == 'verify-dumbbell.py':
@@ -521,6 +539,17 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>` and the chosen type's 
             text = text.replace('in both themes', 'against the white background').replace('in each theme', 'on white')
         if name == 'verify-architecture-delta.py':
             text = delta_clearance(text)
+        if name == 'verify-polar.py':
+            text = text[:text.index('ROOT = Path(')] + text[text.index('TOLERANCE ='):]
+            text = text.replace('from urllib.parse import urlsplit\n', '')
+            text = re.sub(r'def _allowed_stylesheet\(href: str\) -> bool:.*?(?=\ndef _style_property)', 'def _allowed_stylesheet(href: str) -> bool:\n    return False  # Standalone SVG has no external stylesheet dependencies.\n\n', text, flags=re.S)
+            text = text.replace('        paths = list(DEFAULT_PATHS)', '        print("Usage: verify-polar.py FILE.svg [FILE.svg ...]", file=sys.stderr)\n        return 2')
+        if name == 'verify-heatmap.py':
+            text = text.replace('Detect accent fill — warm reddish-orange. Works for both light and dark skins.', 'Detect the blue accent before alpha compositing.')
+            text = text.replace('return r >= 200 and g <= 150 and b <= 100', 'return (r, g, b) == (59, 130, 246)')
+            text = text.replace('(245, 245, 245)', '(255, 255, 255)')
+            text = text.replace('underlay rather than assuming the light paper background. In dark heatmaps, the\n    underlay is the dark paper color (#1e293b), not #ffffff.', 'underlay, with white as the default background.')
+            text = text.replace('elif _is_accent(r_ch, g_ch, b_ch):\n                    focal = True', 'elif _is_accent(r_ch, g_ch, b_ch):\n                    focal = True\n                    if _attr(attrs_str, "data-focal") != "true" and errors is not None:\n                        errors.append("accent fill requires data-focal=true")')
         write('scripts/' + name, text)
     source = (ROOT / 'upstream/diagram-design/scripts/axonometry.py').read_text()
     # Projection and prism geometry only; skins and page builders are presentation.

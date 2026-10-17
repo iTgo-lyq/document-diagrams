@@ -284,4 +284,4 @@ Deliver a self-contained `.svg` file directly at the requested destination. Use 
 
 Follow the six-point [accessible SVG contract](references/primitives-core.md#accessible-svg-contract): role and naming attributes, title first, diagram-prefixed unique IDs, a short title, a content description, and hidden decorative-only symbols.
 
-Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>` and the chosen type's verifier with that SVG path. Inspect the rendered figure at the intended display width; automated checks cannot establish text fit, contrast, or factual correctness. Report material simplifications from an import alongside the file.
+Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen type and semantic pattern references for additional checks, using their documented arguments; some checks validate rule constants and do not accept an SVG path. Where no extra command is provided, use the reference's checklist. Inspect the rendered figure at the intended display width; automated checks cannot establish text fit, contrast, or factual correctness. Report material simplifications from an import alongside the file.

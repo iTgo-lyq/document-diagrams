@@ -1,6 +1,6 @@
 # Core SVG primitives
 
-Routed from SKILL.md §6. SKILL.md keeps the six connector rules as one line each, the arrow roles, and a one-line node box summary. This file holds the markup and the long form of every rule. The copied template already carries the background rect, all three arrow markers, so load this file when you need exact markup or a rule's edge cases.
+Routed from SKILL.md §6. SKILL.md keeps the six connector rules as one line each, the arrow roles, and a one-line node box summary. This file holds the markup and the long form of every rule. The SVG template provides a white background and one default filled marker. Add required marker variants from visual-style.md. Load this file for primitive markup and connector edge cases.
 
 Type-specialized primitives (lifeline, activation bar, region) live in the relevant type reference linked in SKILL.md §3.
 

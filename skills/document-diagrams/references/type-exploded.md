@@ -34,8 +34,8 @@ Draw faces as plain SVG `<path>` and `<polygon>` elements with the projected poi
 - **Levels:** Parts that sit side by side in the assembled object share a level and explode together. A phone's logic board and battery sit next to each other inside the housing, so they lift as one level instead of stacking two gaps apart.
 - **Gap:** One gap between every pair of levels, `gap = max(k x top-face height, 3 x thickness of the thickest solid part)`, rounded up to a multiple of 4. `k = 0.5` is the floor; raise it to `0.75` when a tall part would hide the focal part below it. Top-face height is `(w + d) / 2` of the largest footprint. Containers (a housing, a box) do not count toward thickness.
 - **Clearance:** If a leader would cross another part, or two labels would sit closer than 36px, raise the gap in steps of 4 until neither happens. Two parts on one level that collide cannot be fixed by the gap: move one of them in plan.
-- **Paint order:** Bottom level first. Inside a level, parts farther back (smaller `x + y`) paint first. A container is split: its back half (silhouette, rim, cavity, floor) paints before the parts that sit inside it, and its outer walls and front rim paint after them. This is the only way an assembled frame shows the parts inside a tray correctly, and it stays correct throughout an explode.
-- **Frame:** The canvas is 1000 wide. The object and a 240px label column are centred together; the viewBox height follows the exploded object plus a 40px top margin. Nothing is clipped at the closed frame either, because the closed object fits inside the exploded one.
+- **Paint order:** Bottom level first. Inside a level, parts farther back (smaller `x + y`) paint first. A container is split: its back half (silhouette, rim, cavity, floor) paints before the parts that sit inside it, and its outer walls and front rim paint after them. This is the only way an assembled frame shows the parts inside a tray correctly, and it remains correct in the static exploded view.
+- **Frame:** The canvas is 1000 wide. The object and a 240px label column are centred together; the viewBox height follows the exploded object plus a 40px top margin. The assembled geometry also fits inside these bounds.
 
 ### Faces and lines
 
@@ -72,8 +72,8 @@ One part at most wears the accent, under the SKILL.md rule of 1 to 2 focal eleme
 
 `scripts/verify-exploded.py` reprojects each part from what it declares:
 
-- The figure: one `<g data-exploded data-origin="ox oy" data-gap="g">` wrapping every part.
-- Each part: a `<g>` with `data-part` (key), `data-name` (the label text), `data-rect="x0 y0 x1 y1 r"`, `data-z`, `data-t`, `data-level`, optional `data-kind="housing"` for a container and `data-focal` for the focal part. Animated parts add `data-closed-z`.
+- The figure: one `<g data-exploded="" data-origin="ox oy" data-gap="g">` wrapping every part.
+- Each part: a `<g>` with `data-part` (key), `data-name` (the label text), `data-rect="x0 y0 x1 y1 r"`, `data-z`, `data-t`, `data-level`, optional `data-kind="housing"` for a container and `data-focal` for the focal part.
 - Inside each part: the first `<path data-role="silhouette">` is the part's outline at its declared box, and a `<g data-role="label">` holds a `<line data-role="leader">` and a `<text data-role="name">`. Its complete text, including inline `<tspan>` descendants, must match the part's `data-name`.
 - Trace lines carry `data-role="trace"`.
 

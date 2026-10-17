@@ -94,3 +94,8 @@ Values 34 and 71 on a 0–100 domain compute to 458.4 and 739.6, rounded to 458 
 - **The connector is a gap, not a trajectory.** It encodes the distance between two values and nothing about what lies between them — no intermediate points, no rate, no guarantee the change was monotonic. Do not narrate it as movement.
 - **State the row order** in the legend or source line: by one endpoint, by signed change, by absolute change, or by an order the subject supplies (chronological, geographic, ordinal). "By gap" alone is ambiguous — say signed or absolute. What is not allowed is an unstated order, which reads as arbitrary.
 - **A row missing an endpoint is disclosed, never imputed and never silently dropped.** Removing incomplete categories without saying so changes the population being compared. Either draw the known end and name the missing value, or drop the row *and* record which rows went and why — a lone dot is otherwise indistinguishable from two coincident dots, which is to say from a genuine zero gap.
+
+
+## Dumbbell rule verification
+
+Run `python3 <skill-dir>/scripts/verify-dumbbell.py` with no positional file argument. It checks the documented domain formula and palette contrast constants; it does not inspect an authored SVG. Check the actual SVG with check_svg.py and inspect its values, geometry and rendered contrast separately.

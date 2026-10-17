@@ -75,6 +75,43 @@ class RuntimeTests(unittest.TestCase):
     def test_dumbbell_domain_and_actual_palette_contract(self):
         self.run_helper('verify-dumbbell.py')
 
+    def test_heatmap_enforces_the_blue_focal_budget(self):
+        source = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
+        <rect width="100%" height="100%" fill="#ffffff"/>
+        <text data-row-label="R" x="10" y="80">R</text>
+        <text data-col="C1" x="100" y="30">C1</text>
+        <text data-col="C2" x="220" y="30">C2</text>
+        <rect data-row="R" data-col="C1" data-value="1" x="60" y="50" width="100" height="60" fill="rgba(30,41,59,0.1)"/>
+        <rect data-row="R" data-col="C2" data-value="2" data-focal="true" x="180" y="50" width="100" height="60" fill="rgba(59,130,246,0.2)"/>
+        </svg>'''
+        path = self.work / 'heatmap.svg'
+        path.write_text(source)
+        self.run_helper('verify-heatmap.py', path)
+        for bad, message in [
+                (source.replace('rgba(30,41,59,0.1)', 'rgba(59,130,246,0.1)'), 'found 2 focal cells'),
+                (source.replace(' data-focal="true"', ''), 'accent fill requires data-focal=true')]:
+            with self.subTest(message=message):
+                path.write_text(bad)
+                result = subprocess.run(
+                    [sys.executable, str(self.skill / 'scripts/verify-heatmap.py'), str(path)],
+                    cwd=self.work, text=True, capture_output=True)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn(message, result.stdout + result.stderr)
+
+    def test_polar_validates_standalone_svg_and_data_geometry(self):
+        source = (ROOT / 'tests/fixtures/polar-static.svg').read_text()
+        path = self.work / 'polar.svg'
+        path.write_text(source)
+        self.run_helper('check_svg.py', path)
+        self.run_helper('verify-polar.py', path)
+        for bad in [source.replace('data-polar-value="32"', 'data-polar-value="80"', 1),
+                    source.replace('</svg>', '<style>@import url(https://fonts.googleapis.com/css2);</style></svg>')]:
+            path.write_text(bad)
+            result = subprocess.run(
+                [sys.executable, str(self.skill / 'scripts/verify-polar.py'), str(path)],
+                cwd=self.work, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+
     def test_template_arrows_clear_source_and_target(self):
         root = ET.parse(self.skill / 'assets/template.svg').getroot()
         marker = next(e for e in root.iter() if e.tag.endswith('marker'))

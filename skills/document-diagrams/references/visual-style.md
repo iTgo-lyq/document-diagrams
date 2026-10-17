@@ -4,7 +4,7 @@ Use a white canvas, light semantic fills, thin outlines, restrained corner radii
 
 ## Fonts and sizes
 
-Every SVG declares the following stack in its own `<style>`:
+Declare the following stack in a local `<style>` or a `font-family` presentation attribute on the SVG or its text. When a type forbids style elements (such as Polar), use the presentation attribute:
 
 ```css
 text {

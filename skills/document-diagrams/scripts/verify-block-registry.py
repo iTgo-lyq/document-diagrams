@@ -204,7 +204,7 @@ def targets(args: argparse.Namespace) -> list[Path]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("files", nargs="*", help="HTML diagrams to check")
+    parser.add_argument("files", nargs="*", help="SVG diagrams to check")
     parser.add_argument("--all", action="store_true", help="check every shipped asset")
     args = parser.parse_args()
 

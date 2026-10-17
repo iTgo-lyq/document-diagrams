@@ -128,6 +128,8 @@ Use one primary pattern per figure. A second pattern may supply at most one supp
 
 **Static fallback:** This pattern has no animated form — it is always static; bespoke interaction (click-to-expand, filter-by-ID) is out of this skill's scope entirely . Every ID badge, block name, and any shown port label must be legible in the single rendered frame.
 
+**Validation:** Run `python3 <skill-dir>/scripts/verify-block-registry.py <file.svg>` for this pattern. It checks nonempty unique block IDs, names, resolvable parent IDs and absence of parent cycles within each SVG. Keep referenced parents represented in that file, including context nodes when a hierarchy is split.
+
 **Nearest visual type:** **Tree** — Nested's single-chain containment cannot show two children of one parent; Dependency graph permits multi-parent nodes and cycles this pattern must forbid; Architecture's zones are flat, capped at 3, and explicitly route overflow to Swimlane, not to nested grouping.
 
 **A note on provenance, not a claim of compliance:** "block," noun-phrase naming, and "flow port" are SysML Block Definition Diagram vocabulary, used because this pattern documents structure, the thing SysML's naming convention is for (IDEF0's verb-phrase convention documents *functions* instead — the wrong fit here). This is SysML-*informed* vocabulary applied to Tree's existing layout grammar, not a claim of SysML compliance: no OCL constraints, no XMI interchange, no tool-certified conformance, and no IDEF0 compliance either.

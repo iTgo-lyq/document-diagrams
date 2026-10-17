@@ -124,8 +124,8 @@ def _attr(attrs_str: str, name: str) -> str | None:
 
 
 def _is_accent(r: int, g: int, b: int) -> bool:
-    """Detect accent fill — warm reddish-orange. Works for both light and dark skins."""
-    return r >= 200 and g <= 150 and b <= 100
+    """Detect the blue accent before alpha compositing."""
+    return (r, g, b) == (59, 130, 246)
 
 
 def _parse_color(
@@ -134,15 +134,14 @@ def _parse_color(
     """Parse a CSS hex or rgb/rgba color into the visible 8-bit RGB components.
 
     For rgba() values with alpha < 1, blend the color against the actual canvas
-    underlay rather than assuming the light paper background. In dark heatmaps, the
-    underlay is the dark paper color (#1e293b), not #ffffff.
+    underlay, with white as the default background.
     """
     value = color.strip()
     if not value:
         return None
 
     if underlay is None:
-        underlay = (245, 245, 245)
+        underlay = (255, 255, 255)
 
     def blend(rgb: tuple[int, int, int], alpha: float) -> tuple[int, int, int]:
         if alpha >= 1.0:
@@ -294,6 +293,8 @@ def parse_cells(source: str, errors: list[str] | None = None) -> list[dict]:
                     opacity = None
                 elif _is_accent(r_ch, g_ch, b_ch):
                     focal = True
+                    if _attr(attrs_str, "data-focal") != "true" and errors is not None:
+                        errors.append("accent fill requires data-focal=true")
 
         cells.append(
             {
@@ -501,7 +502,7 @@ def check_file(path: Path) -> list[str]:
                 canvas_underlay = parsed
                 break
     if canvas_underlay is None:
-        canvas_underlay = (245, 245, 245)
+        canvas_underlay = (255, 255, 255)
 
     text_labels = parse_text_labels(source, geometry_errors)
     errors.extend(f"{path.name}: {finding}" for finding in geometry_errors)
