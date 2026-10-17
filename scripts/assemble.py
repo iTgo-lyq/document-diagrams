@@ -21,7 +21,7 @@ COLORS = {
     '#5a7d9a': '#3b82f6', '#7a8c47': '#22c55e', '#c9a23a': '#f59e0b',
     '#7c8f6f': '#22c55e', '#5e7a9b': '#3b82f6', '#b8915a': '#f59e0b',
     '#9c6b50': '#ec4899', '#6e6479': '#a855f7',
-    '#5a6580': '#64748b',
+    '#5a6580': '#64748b', '#4a7c59': '#22c55e',
 }
 
 
@@ -186,6 +186,8 @@ def finish_guidance(text):
         return m.group(1) + ('12px' if 'node-name' in m.group(1) else '10px')
     text = re.sub(r'(`(?:node-name|sublabel|eyebrow|arrow-label|callout)`(?:-role| role)?(?: at|,)?\s*\(?)[\d.]+(?:[–/][\d.]+)?\s*px', role_size, text)
     text = re.sub(r'font-size\s*[=: ]\s*\d+(?:\.\d+)?(?:\s*-?px)?', 'font-size=10', text)
+    text = re.sub(r'(?m)^(title\s+.*)font-size=10', r'\1font-size=12', text)
+    text = re.sub(r'(?m)^((?:tool|sub|in→out)\s+.*)\bsoft\b', r'\1muted', text)
     text = re.sub(r'(?<= at )\d+(?:\.\d+)?\s*px(?=, weight)', '10px', text)
     text = re.sub(r'size \d+(?:\.\d+)? (?:sans|system-font)', 'size 12 system-font', text)
     text = re.sub(r'\d+(?:\.\d+)?-px system-font text', '10px system-font text', text)
@@ -205,6 +207,17 @@ def finish_guidance(text):
     text = text.replace('container fill `rgba(122,140,71,0.06)`, stroke `rgba(122,140,71,0.45)`, name text `#22c55e`', 'container fill `#d1fae5`, stroke `#22c55e`, name text `#166534`')
     text = re.sub(r'<text\b([^>]*?)fill="(?:\{accent\}|#3b82f6)"', r'<text\1fill="{ink}"', text)
     text = text.replace('Title text in `accent`.', 'Title text in `ink`.')
+    text = text.replace('Focal bar label in `accent`; others in `muted`.', 'Focal bar label in `ink`; others in `muted`.')
+    text = text.replace("the focal bar's label may take accent", "the focal bar's label uses `ink`")
+    text = text.replace('Corner tag in `accent`, weight 600.', 'Corner tag in `ink`, weight 600.')
+    text = text.replace('`muted` (or `accent` on focal)', '`muted` (or `ink` on focal)')
+    text = text.replace('station name may use `accent`', 'station name uses the dark semantic text color')
+    text = text.replace('even though the accent fill is not — see below', 'with contrast measured against the actual background — see below')
+    for old, new in [('`#22c55e` sage', '`#22c55e` green'), ('`#3b82f6` dusty-blue', '`#3b82f6` blue'),
+                     ('`#f59e0b` mustard', '`#f59e0b` orange'), ('`#ec4899` rust-brown', '`#ec4899` pink'),
+                     ('`#a855f7` slate', '`#a855f7` purple'), ('`out: TB` mustard chip', '`out: TB` orange chip')]:
+        text = text.replace(old, new)
+    text = re.sub(r'^Text inside chip: white[^\n]*', 'For each chip hue, use the matching light fill, stroke and dark text triple from visual-style.md. Keep the code visible at 10px semibold. The hue encodes payload format according to this table.', text, flags=re.M)
     text = re.sub(r'`scripts/build-exploded-examples\.py`[^\n]*', '`scripts/axonometry.py` supplies the projection helpers below.', text)
     text = re.sub(r'`scripts/build-axonometric-plan-examples\.py`[^\n]*', '`scripts/axonometry.py` supplies the shared projection helpers.', text)
     text = text.replace('`<skill-dir>` is `skills/document-diagrams/` in this repo, or the skill\'s own directory when it\'s installed standalone or as a plugin.', '`<skill-dir>` is this installed skill directory.')
@@ -257,11 +270,14 @@ def svg_scope(text):
     text = text.replace('self_check.py', 'check_svg.py')
     text = text.replace('Accessible-SVG contract, single-file safety, content inside the viewBox, motion basics.', 'XML syntax, accessible naming, unique IDs and local resource references; inspect geometry and rendered bounds separately.')
     text = text.replace('Complete static/no-JS', 'Complete static')
-    text = re.sub(r'^.*\*\*`min-width` equals.*\n', '- [ ] SVG dimensions preserve readable text at the intended display size, with all content inside the viewBox?\n', text, flags=re.M)
+    text = re.sub(r'^- \[ \] (?:\*\*)?`min-width` equals.*\n', '- [ ] SVG dimensions preserve readable text at the intended display size, with all content inside the viewBox?\n', text, flags=re.M)
+    text = re.sub(r'^- \[ \] `@media print`.*\n', '', text, flags=re.M)
     text = re.sub(r'^- \*\*Responsive presentation:\*\*.*$', '- **Display size:** preserve the three-panel comparison at a readable width. Do not compress labels or scale snapshots independently. Keep the complete comparison in the SVG viewBox.', text, flags=re.M)
     text = text.replace('roughly the page `<h1>`, ', '')
     text = text.replace('roughly the page `<h1>`, and ', '')
+    text = text.replace('Only the page `<h1>` uses `title`.', 'Only the overall SVG heading uses the 16px `title` role.')
     text = re.sub(r', or the `/document-diagrams:[^`]+` slash command', '', text)
+    text = re.sub(r', or uses `/document-diagrams:[^`]+`', '', text)
     text = text.replace('and the matching import command', 'and requests to import these formats')
     text = re.sub(r'^3\. (?:Produce `svg` / `png`|Export SVG/PNG|Export SVG or PNG)[^\n]*\n', '3. Validate the SVG and inspect the rendered result.\n', text, flags=re.M)
     text = text.replace('Write the self-contained HTML.', 'Write the self-contained SVG directly.')
@@ -274,6 +290,47 @@ def svg_scope(text):
     text = text.replace('(see ADR 0001)', '')
     text = text.replace('Color, motion, and position', 'Color and position')
     return text
+
+
+def delta_clearance(text):
+    """Keep endpoint identity checks while adapting the filled-arrow clearance."""
+    helper = '''def endpoint_meets_port(points, bounds, source):
+    """Project the drawn endpoint back to its boundary port along its tangent.
+
+    Filled markers use a 5px source gap and an 11px destination path gap
+    (6px tip extension plus 5px visual clearance). Endpoints must be outside
+    their node, and the projected port must still meet the declared node.
+    """
+    point = points[0] if source else points[-1]
+    neighbors = points[1:] if source else reversed(points[:-1])
+    neighbor = next((p for p in neighbors if math.dist(point, p) > EPS), None)
+    if neighbor is None:
+        return False
+    x, y = point
+    left, top, width, height = bounds
+    if left <= x <= left + width and top <= y <= top + height:
+        return False
+    dx, dy = x - neighbor[0], y - neighbor[1]
+    if abs(dy) <= EPS:
+        if not ((x < left and dx > 0) or (x > left + width and dx < 0)):
+            return False
+    elif abs(dx) <= EPS:
+        if not ((y < top and dy > 0) or (y > top + height and dy < 0)):
+            return False
+    else:
+        return False  # Boundary ports are perpendicular to their node edge.
+    length = math.hypot(dx, dy)
+    gap = 5.0 if source else 11.0
+    port = (x + gap * dx / length, y + gap * dy / length)
+    return on_perimeter(port, bounds)
+
+
+'''
+    text = text.replace('def selector_may_match(', helper + 'def selector_may_match(')
+    text = text.replace('not on_perimeter(obj.points[0 if index == 0 else -1], endpoint.bounds)',
+                        'not endpoint_meets_port(obj.points, endpoint.bounds, index == 0)')
+    return text.replace('drawn relationship endpoint does not meet component',
+                        'relationship clearance/tangent does not resolve to component')
 
 
 def main():
@@ -298,6 +355,8 @@ def main():
             text = re.sub(r"The path's last command ends.*?(?=\n\n)", 'Route to the correct destination edge, never its centroid. Geometry formulas identify boundary ports. Apply the filled-marker clearance from visual-style.md to the final path: start 5px outside the source and end 11px before the destination along the final direction. The arrow tip then has 5px clearance.', text, flags=re.S)
             text = re.sub(r'  - \*\*All three Survey-side.*?(?=\n)', '  - **All three Survey-side → Shared Drive connectors (C1 / C2 / C3) enter the LEFT edge.** Fan their boundary ports at y = 108 / 124 / 140, then apply the marker clearance along the right-going paths.', text)
             text = re.sub(r'\*\*Marker-visibility rule of thumb:\*\*.*?Translation:', '**Marker visibility:** keep the entire marker outside the target. The filled marker extends 6px beyond the path endpoint; leave 11px between that endpoint and the target to obtain 5px tip clearance. Choose the entry side by final travel direction:', text, flags=re.S)
+            text = text.replace('marker triangle visibly touches the destination rectangle edge', 'marker tip remains 5px clear of the destination rectangle edge')
+            text = text.replace('**Marker not touching the target.** Path ends at the centroid or stops short of the border.', '**Incorrect marker clearance.** Path ends at the centroid, overlaps the target, or leaves an unexplained gap. Use a 5px source gap and an 11px target path gap for the filled marker.')
         if path.name == 'output-spec.md':
             text = re.sub(r'### Visual values.*?(?=### Safe areas)', '', text, flags=re.S)
             text = text.replace('## Type Visual values', '### Type sizes')
@@ -319,6 +378,11 @@ def main():
                     sizing = False
             text = '\n'.join(rows)
             text = re.sub(r'^.*Requested non-HTML formats.*$', '- [ ] Standalone SVG passes XML, accessibility and structural checks?', text, flags=re.M)
+            text = text.replace('`balanced` and `simplified` sit inside the standard complexity budget (SKILL.md §7).',
+                'These detail ceilings are upper bounds. For `balanced` and `simplified`, also apply the chosen type and SKILL.md §7 budgets, using the strictest limit (normally 9 nodes and 12 edges). Split when either limit is exceeded.')
+        if path.name == 'type-architecture-delta.md':
+            text = text.replace("The path's start meets the source rectangle's perimeter and its end meets the target's perimeter, within 2px for stroke/arrow-cap rounding.",
+                "Use the filled marker from visual-style.md. Start 5px outside the source boundary port and end 11px before the target boundary port along the path tangent. The arrow tip then clears the target by 5px. The verifier projects each endpoint along its tangent back to its declared component perimeter, with 2px tolerance for rounding; a nearby but misdirected endpoint does not pass.")
         if path.name == 'type-quadrant.md':
             text = re.sub(r'same house skin \([^)]*\)', 'the same visual palette', text)
             text = re.sub(r'^- Sans-serif H1.*\n', '', text, flags=re.M)
@@ -342,6 +406,18 @@ def main():
             text = re.sub(r'With the canonical marker .*?`marker_overhang = 1.2`:', 'With the filled marker in visual-style.md, use `marker_overhang = 11` (6px tip extension plus 5px clearance):', text)
             text = text.replace('The arrowhead overhang completes the final 1.2px to `q_entry(j)`, landing on the box edge without crossing its stroke.', 'The arrowhead extends 6px past the endpoint, leaving 5px of clearance before the target edge.')
             text = text.replace('marker_gap = 6                         # 4..8px; 6px canonical', 'marker_gap = 11                        # 6px arrowhead + 5px clearance')
+            text = text.replace("connectors begin at the circle's clockwise exit from the source box and end just before its counterclockwise entry into the destination box, so the marker tip lands on the destination stroke.",
+                'connectors begin 5px beyond the clockwise exit from the source box and end before the counterclockwise entry into the destination box, leaving visible marker clearance.')
+            text = text.replace('phi_entry = atan2(', 'phi_exit  = atan2(q_exit(k).y - cy, q_exit(k).x - cx)\nphi_start = phi_exit + 5 / R\nq_start   = C + R * (cos(phi_start), sin(phi_start))\nphi_entry = atan2(')
+            text = text.replace('M q_exit(k).x q_exit(k).y', 'M q_start.x q_start.y')
+            text = text.replace('leaving 5px of clearance before the target edge.', 'leaving approximately 5px of clearance before the target edge. These arc-length offsets are a first estimate: inspect the marker tangent against the actual rectangle edge and increase the offset when needed to maintain at least 5px clearance.')
+            text = text.replace('spoke_start(k) = P_k - d_station * u_k', 'spoke_start(k) = P_k - (d_station + 5) * u_k')
+            text = text.replace('paper or optional dot grid', 'white background')
+            text = text.replace('| Spoke label | `arrow-label` role, `soft`,', '| Spoke label | `arrow-label` role, `muted`,')
+            text = text.replace('The nodes mask microscopic connector overshoot, while every intended endpoint still lands on an edge.', 'Keep paths and marker tips outside the nodes with the specified clearance.')
+            text = text.replace('destination markers land on station edges', 'destination marker tips clear station edges by at least 5px')
+            text = text.replace('Every ring marker lands on a station edge, not its center.', 'Every ring marker points toward the destination boundary and clears it by at least 5px.')
+            text = text.replace("Every dashed spoke begins on a station's inner edge", "Every dashed spoke begins 5px beyond a station's inner edge")
         if path.name == 'type-radar.md':
             text = text.replace('Light and dark values for every slot live in', 'Values for every slot live in')
             for old, new in [('sage','green'), ('dusty-blue','blue'), ('mustard','orange'), ('rust-brown','pink'), ('slate','purple')]:
@@ -431,6 +507,7 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>` and the chosen type's 
         text = text.replace('the shipped Geist / Geist Mono faces', 'reference Latin faces (only an estimate for system-font fallback)')
         text = re.sub(r'skills/document-diagrams/assets/example-[\w-]+\.html', 'path/to/diagram.html', text)
         text = text.replace('.html', '.svg').replace('HTML files', 'SVG files').replace('HTML file', 'SVG file')
+        text = text.replace('Architecture delta HTML contract', 'Architecture delta SVG contract')
         text = text.replace('see export-registry.md "What this never does"', 'the embedded metadata is independent of visible layout')
         if name == 'verify-dumbbell.py':
             a = text.index('2. NON-TEXT CONTRAST')
@@ -442,6 +519,8 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>` and the chosen type's 
             text = text.replace('"rgba(45,49,66,0.55)"', '"rgba(30,41,59,0.55)"')
             text = text.replace('    "rgba(245,245,245,0.40)",\n', '')
             text = text.replace('in both themes', 'against the white background').replace('in each theme', 'on white')
+        if name == 'verify-architecture-delta.py':
+            text = delta_clearance(text)
         write('scripts/' + name, text)
     source = (ROOT / 'upstream/diagram-design/scripts/axonometry.py').read_text()
     # Projection and prism geometry only; skins and page builders are presentation.

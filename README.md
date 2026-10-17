@@ -10,6 +10,8 @@
 
 > 使用 $skill-installer，从 iTgo-lyq/document-diagrams 安装 skills/document-diagrams。
 
+也可以从 [Releases](https://github.com/iTgo-lyq/document-diagrams/releases/latest) 下载 `document-diagrams.zip`，解压后将其中的 `document-diagrams/` 放入个人技能目录。发布包不包含本 README、维护工具或参考源码。
+
 也可以克隆后手动复制到个人技能目录。以下示例使用 Codex 的 `~/.agents/skills`；目标已存在时先决定如何更新，不直接覆盖已有修改。
 
 ```bash
@@ -20,7 +22,7 @@ mkdir -p ~/.agents/skills
 cp -R skills/document-diagrams ~/.agents/skills/document-diagrams
 ```
 
-普通克隆和 GitHub 源码 ZIP 都包含完整的可安装目录，不需要递归克隆。不要只复制 `SKILL.md`。公开发布前，访问此仓库仍需要相应权限。
+普通克隆和 GitHub 源码 ZIP 都包含完整的可安装目录，不需要递归克隆。不要只复制 `SKILL.md`。
 
 本地开发也可把 `skills/document-diagrams` 链接到技能目录。若以前链接的是仓库根目录，需要将该链接更新到新的 skill 目录。
 

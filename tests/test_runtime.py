@@ -97,6 +97,34 @@ class RuntimeTests(unittest.TestCase):
         self.assertIn('yes', json.dumps(diagram))
         self.assertIn('no', json.dumps(diagram))
 
+    def test_delta_accepts_filled_marker_clearance_in_each_direction(self):
+        source = (ROOT / 'tests/fixtures/delta-clearance.svg').read_text()
+        horizontal = source.replace('x="40" y="120"', 'x="200" y="40"').replace('M 80 85 V 109', 'M 125 60 H 189')
+        reverse = lambda s: s.replace('data-from="api" data-to="store"', 'data-from="store" data-to="api"')
+        variants = [source, horizontal,
+                    reverse(source).replace('M 80 85 V 109', 'M 80 115 V 91'),
+                    reverse(horizontal).replace('M 125 60 H 189', 'M 195 60 H 131')]
+        for index, variant in enumerate(variants):
+            with self.subTest(direction=index):
+                path = self.work / 'delta.svg'
+                path.write_text(variant)
+                self.run_helper('check_svg.py', path)
+                self.run_helper('verify-architecture-delta.py', path)
+
+    def test_delta_rejects_wrong_endpoint_clearance_or_direction(self):
+        source = (ROOT / 'tests/fixtures/delta-clearance.svg').read_text()
+        for route in ['M 80 80 V 120', 'M 80 75 V 131',
+                      'M 80 85 H 100 V 109 H 80', 'M 140 85 V 109',
+                      'M 39 60 V 109 H 80', 'M 80 85 H 39 V 140']:
+            with self.subTest(route=route):
+                path = self.work / 'delta.svg'
+                path.write_text(source.replace('M 80 85 V 109', route))
+                result = subprocess.run(
+                    [sys.executable, str(self.skill / 'scripts/verify-architecture-delta.py'), str(path)],
+                    cwd=self.work, text=True, capture_output=True)
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn('clearance/tangent', result.stdout + result.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()

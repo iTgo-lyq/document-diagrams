@@ -145,9 +145,9 @@ Per-lane `color` override (§4): replaces the label fill with `C` and the lane s
 role_chip          rect 14×10 at (node_x+4, node_y+4),  rx=2
 role_chip_text     centered at (node_x+11, node_y+12), font-size=10, weight=600
                                                                 # text = lanes[k].key (3-letter lane code)
-title              centered at (step_cx(j), node_y+26),  font-size=10 sans semibold
+title              centered at (step_cx(j), node_y+26),  font-size=12 sans semibold
 in→out             centered at (step_cx(j), node_y+40),  font-size=10 system-font muted
-tool               centered at (step_cx(j), node_y+52),  font-size=10 system-font soft
+tool               centered at (step_cx(j), node_y+52),  font-size=10 system-font muted
 data chip IN       rect 16×8 at (node_x+4,   node_y+54), rx=2      # payload entering
 data chip OUT      rect 16×8 at (node_x+80,  node_y+54), rx=2      # payload leaving
 ```
@@ -266,16 +266,16 @@ Same catalog as `type-data-flow.md` §8.
 
 | Code | Color (light) | Meaning |
 | ------ | --------------- | --------- |
-| `LS` | `#22c55e` sage | List / assignment / task |
-| `DB` | `#3b82f6` dusty-blue | Dataset / tabular records |
-| `TB` | `#f59e0b` mustard | Table (analysis-ready) |
-| `FL` | `#ec4899` rust-brown | File / document / report |
-| `WB` | `#a855f7` slate | Web / press / public release |
+| `LS` | `#22c55e` green | List / assignment / task |
+| `DB` | `#3b82f6` blue | Dataset / tabular records |
+| `TB` | `#f59e0b` orange | Table (analysis-ready) |
+| `FL` | `#ec4899` pink | File / document / report |
+| `WB` | `#a855f7` purple | Web / press / public release |
 | N/A | omit chip entirely | Unknown or not applicable |
 
-Text inside chip: white, font-size=10, weight 700, system-font.
+For each chip hue, use the matching light fill, stroke and dark text triple from visual-style.md. Keep the code visible at 10px semibold. The hue encodes payload format according to this table.
 
-Data-type chip colors are a **separate semantic axis** from the per-node color override (§4). Chip colors describe *payload format*; node color describes *concern type*. A node can have both an `out: TB` mustard chip and a pink border simultaneously.
+Data-type chip colors are a **separate semantic axis** from the per-node color override (§4). Chip colors describe *payload format*; node color describes *concern type*. A node can have both an `out: TB` orange chip and a pink border simultaneously.
 
 ---
 

@@ -11,7 +11,7 @@
 - **Y-axis gridlines:** 4–6 horizontal lines at regular intervals. Stroke `ink @ 0.08` (very faint), 0.8px. X-axis baseline at `ink @ 0.25`, 1px.
 - **Y-axis labels:** right-aligned `arrow-label` role 10px in `muted`, at x=72 (8px left of the plot area).
 - **X-axis labels:** centered below each bar, `node-name` role 12px 600 for category names.
-- **Value labels:** `arrow-label` role 10px above each bar. Focal bar label in `accent`; others in `muted`.
+- **Value labels:** `arrow-label` role 10px above each bar. Focal bar label in `ink`; others in `muted`.
 - **Focal bar:** 1 bar max in accent fill/stroke. All others in `muted @ 0.15` fill + `muted` stroke.
 - **Y-axis line:** thin vertical `<line>` at x=80 from y=40 to y=420.
 
@@ -59,7 +59,7 @@ Focal bar: replace fill with `accent @ 0.12`, stroke with `accent`, label fill w
 - **Gridlines:** vertical at each tick, `ink @ 0.08` 0.8px, spanning y 56→408. At the domain floor the axis line replaces the gridline rather than doubling it: `ink @ 0.25` 1px, y 40→420.
 - **Tick labels:** centered under each gridline at y=440, `arrow-label` role 10px `muted`.
 - **Axis title:** the value axis carries the family's axis label — `eyebrow` role 10px `muted`, ``, centered at x=580, y=456, below the tick labels and clear of the legend rule. A horizontal axis takes the un-rotated form the scatter x-axis uses, not the `rotate(-90 24 230)` form the column charts apply to their y-axis. The category axis needs no title: the row labels name themselves.
-- **Dots:** r=6, positioned by value. Style by *series*: the reference end hollow (paper fill, `muted` stroke 1.5px), the focal end solid `accent` with a 1px `ink` stroke. Both marks therefore have a boundary above 3:1 even though the accent fill is not — see below. Fill weight, not hue, carries the pairing.
+- **Dots:** r=6, positioned by value. Style by *series*: the reference end hollow (paper fill, `muted` stroke 1.5px), the focal end solid `accent` with a 1px `ink` stroke. Both marks therefore have a boundary above 3:1 with contrast measured against the actual background — see below. Fill weight, not hue, carries the pairing.
 - **Accent marks the series, not a focal row.** The solid dot repeats on every row — the one place this variant departs from the one-accent rule above, because the two ends must be told apart in each pair. Do not additionally accent a "most changed" row; the sort order already carries rank.
 - **Connector:** `ink @ 0.55` 1px (`rgba(30,41,59,0.55)` under the white background, the value `scripts/verify-dumbbell.py` checks), declared before both dots so the dots cap it. It is not the axis hairline: the connector is what says *these two dots are one row*, so it has to clear 3:1 (verify the actual composited color rather than reusing a ratio from another palette).
 - **Endpoint positions round, they never snap.** `x = 200 + (v − floor) ÷ (ceil − floor) × 760`, with `floor` and `ceil` set by the axis rule below, rounded to the nearest integer pixel — at most 0.5px, below one rendered pixel. Data coordinates are exempt from the 4px grid; snapping them moves the data.

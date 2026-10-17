@@ -63,7 +63,7 @@ Thus station 1 sits at the top, and increasing `k` moves clockwise. Round statio
 
 ### 2.2 Solid ring-flow endpoints
 
-Ring connectors travel from station `k` to station `j = (k + 1) mod N` as circular SVG arcs on the station circle itself. Every segment uses the same center `C`, radius `R`, and clockwise sweep. The station boxes interrupt the circle; connectors begin at the circle's clockwise exit from the source box and end just before its counterclockwise entry into the destination box, so the marker tip lands on the destination stroke.
+Ring connectors travel from station `k` to station `j = (k + 1) mod N` as circular SVG arcs on the station circle itself. Every segment uses the same center `C`, radius `R`, and clockwise sweep. The station boxes interrupt the circle; connectors begin 5px beyond the clockwise exit from the source box and end before the counterclockwise entry into the destination box, leaving visible marker clearance.
 
 Find the circle/rectangle intersections against all four edges of station `k`. For vertical edge `x = x_e`:
 
@@ -87,15 +87,18 @@ q_exit(k)  = circle/box intersection immediately after  theta_k clockwise
 Compensate for the marker tip before emitting the destination endpoint. With the filled marker in visual-style.md, use `marker_overhang = 11` (6px tip extension plus 5px clearance):
 
 ```text
+phi_exit  = atan2(q_exit(k).y - cy, q_exit(k).x - cx)
+phi_start = phi_exit + 5 / R
+q_start   = C + R * (cos(phi_start), sin(phi_start))
 phi_entry = atan2(q_entry(j).y - cy, q_entry(j).x - cx)
 phi_end   = phi_entry - marker_overhang / R
 q_end     = C + R * (cos(phi_end), sin(phi_end))
 
-M q_exit(k).x q_exit(k).y
+M q_start.x q_start.y
 A R R 0 0 1 q_end.x q_end.y
 ```
 
-The large-arc flag is `0` because adjacent-station gaps are less than 180 degrees; the sweep flag is always `1` for clockwise motion in SVG coordinates. The arrowhead extends 6px past the endpoint, leaving 5px of clearance before the target edge. The closing connector from station `N-1` to station 0 uses the identical formula.
+The large-arc flag is `0` because adjacent-station gaps are less than 180 degrees; the sweep flag is always `1` for clockwise motion in SVG coordinates. The arrowhead extends 6px past the endpoint, leaving approximately 5px of clearance before the target edge. These arc-length offsets are a first estimate: inspect the marker tangent against the actual rectangle edge and increase the offset when needed to maintain at least 5px clearance. The closing connector from station `N-1` to station 0 uses the identical formula.
 
 Loop's circular ring arcs are a documented type-specific exception to SKILL.md §6 rule 1, following the same precedent as Medallion's promotion arcs. A Loop never mixes cubic, straight, or rounded-orthogonal segments into its ring: the six visible gaps must read as pieces of one continuous circle.
 
@@ -111,7 +114,7 @@ d_station = box_distance(u_k, a, b)
 d_hub     = box_distance(u_k, A, B)
 marker_gap = 11                        # 6px arrowhead + 5px clearance
 
-spoke_start(k) = P_k - d_station * u_k
+spoke_start(k) = P_k - (d_station + 5) * u_k
 hub_edge(k)    = C   + d_hub     * u_k
 spoke_end(k)   = C   + (d_hub + marker_gap) * u_k
 ```
@@ -144,12 +147,12 @@ Include the full circle extrema `cx +/- R`, `cy +/- R` plus station bounds and m
 |---|---|
 | Station | Standard node: `paper` fill, `ink` stroke, `radius-md`; name in `node-name`, sublabel in `sublabel` |
 | Hub | A data/output surface from the semantic palette; slightly larger than a station |
-| Focal station | At most one: `accent-tint` fill, `accent` stroke; station name may use `accent` |
+| Focal station | At most one: `accent-tint` fill, `accent` stroke; station name uses the dark semantic text color |
 | Ring flow | Circular `A R R 0 0 1` arcs on the station circle, solid `muted` stroke, default arrowhead at the destination; clockwise only |
 | Write-back spoke | Dashed `soft` stroke at reduced emphasis, `stroke-dasharray="5,4"`, with a `soft` arrowhead |
-| Spoke label | `arrow-label` role, `soft`, uppercase, paper mask, 6–10px clear of the connector |
+| Spoke label | `arrow-label` role, `muted`, uppercase, paper mask, 6–10px clear of the connector |
 
-Draw in this order: paper or optional dot grid → ring arrows → dashed spokes → spoke-label masks and labels → station boxes → hub → text. The nodes mask microscopic connector overshoot, while every intended endpoint still lands on an edge.
+Draw in this order: white background → ring arrows → dashed spokes → spoke-label masks and labels → station boxes → hub → text. Keep paths and marker tips outside the nodes with the specified clearance.
 
 The hub is not a seventh process step. It is accumulated state: memory, standards, evidence, policy, or a shared operating record. Keep its copy to one name plus one short sublabel.
 
@@ -159,7 +162,7 @@ The hub is not a seventh process step. It is accumulated state: memory, standard
 
 SKILL.md §6 applies in full except for the two Loop-specific connector primitives: circular ring arcs (§2.2) and straight radial spokes (§2.3). Like Medallion's promotion arcs, these replace §6 rule 1 for this diagram type:
 
-- Ring arrows are same-radius circular arcs, solid, and clockwise. Every path uses `A R R 0 0 1`; destination markers land on station edges and no connector ends at a center point.
+- Ring arrows are same-radius circular arcs, solid, and clockwise. Every path uses `A R R 0 0 1`; destination marker tips clear station edges by at least 5px and no connector ends at a center point.
 - Spokes are dashed and point inward. A solid spoke destroys the visual distinction between operating flow and write-back.
 - Labels use opaque masks and maintain a visible 6–10px connector gap. Never place text on the stroke.
 - No ring connector or spoke may overlap another connector. Ring paths remain outside the hub; spokes occupy distinct radial routes.
@@ -173,8 +176,8 @@ SKILL.md §6 applies in full except for the two Loop-specific connector primitiv
 1. Station count is 5–8 and hub count is exactly one.
 2. Station 0 is at `-90deg`; all others use equal `360/N` steps clockwise.
 3. Every solid ring arrow connects adjacent stations with `A R R 0 0 1`, using the same `R`; the last returns to the first.
-4. Every ring marker lands on a station edge, not its center.
-5. Every dashed spoke begins on a station's inner edge and stops `marker_gap` before the hub stroke.
+4. Every ring marker points toward the destination boundary and clears it by at least 5px.
+5. Every dashed spoke begins 5px beyond a station's inner edge and stops `marker_gap` before the hub stroke.
 6. Ring connectors stay outside the hub; spokes do not cross or overlap.
 7. At most one station uses `accent-tint` + `accent`; the hub uses a distinct data/output surface.
 8. Spoke labels, if present, use `arrow-label`, an opaque mask, and a 6–10px gap.

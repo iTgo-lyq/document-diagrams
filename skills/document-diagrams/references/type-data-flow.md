@@ -147,9 +147,9 @@ Per-lane `color` override (§4): replaces the label fill with `C` and the lane t
 ```
 role_chip          rect 18×10 at (node_x+4, node_y+4),  rx=3
 role_chip_text     centered at (node_x+13, node_y+9), eyebrow role, font-size=10, weight=600
-title              centered at (step_cx(j), node_y+23), node-name role, font-size=10
+title              centered at (step_cx(j), node_y+23), node-name role, font-size=12
 sub                centered at (step_cx(j), node_y+35), sublabel role, font-size=10, muted
-tool               centered at (step_cx(j), node_y+47), sublabel role, font-size=10, soft
+tool               centered at (step_cx(j), node_y+47), sublabel role, font-size=10, muted
 data chip IN       rect 16×8 at (node_x+4,   node_y+54), rx=3      # payload type entering the node
 data chip OUT      rect 16×8 at (node_x+80,  node_y+54), rx=3      # payload type leaving the node
 ```
@@ -245,9 +245,9 @@ Either chip may be omitted (e.g., a sink node has only an input chip; a source-o
 | `DB` | `#3b82f6` (steel-blue) | Dataset / Raw file |
 | `TB` | `#f59e0b` (amber) | Table / Analysis-ready |
 | `FL` | `#ec4899` (sienna) | File / Report / Export |
-| `LS` | `#4a7c59` (forest) | Live stream / Event |
+| `LS` | `#22c55e` (forest) | Live stream / Event |
 
-Text inside chip: white, `eyebrow` role at 10px, weight 700.
+For each chip hue, use the matching light fill, stroke and dark text triple from visual-style.md. Keep the code visible at 10px semibold. The hue encodes payload format according to this table.
 
 Data-type chip colors are a **separate semantic axis** from the per-node color override (§4). The chip colors describe *payload format*; the node color override describes *concern type* (governance, observability, …). Don't conflate them — a node can have both an `out: TB` amber chip and a pink border color simultaneously.
 
@@ -286,7 +286,7 @@ Above 4 lanes or 6 steps: split into two diagrams (e.g., ingestion pipeline / an
 - **Placeholder empty cells** — if a role doesn't participate in a step, leave the cell empty (no box, no text).
 - **More than one labelled arrow** — only the focal cross-role handoff gets a label.
 - **Diagonal arrows** — always horizontal-first, then vertical; single right-angle bend.
-- **`title` role for node titles** — node titles use the `node-name` role (technical context). Only the page `<h1>` uses `title`.
+- **`title` role for node titles** — node titles use the `node-name` role (technical context). Only the overall SVG heading uses the 16px `title` role.
 - **Accent on more than one node, one step, one arrow** — focal = one node + one step + one arrow, max.
 - **`node-name` role for role labels** — lane labels always use the uppercase `eyebrow` role (they are identifiers, not prose).
 - **`color` override on a focal element** — ignored. Accent always wins.

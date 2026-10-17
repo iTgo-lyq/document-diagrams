@@ -49,7 +49,7 @@ How much of the source survives. This is a *count* dial — it governs how many 
 | `balanced` (default) | ≤12 | ≤16 | technical sublabel on ≤4 nodes | Components that carry the story; leaf clusters collapse to one node each. |
 | `simplified` (簡略) | ≤7 | ≤9 | none | Capabilities and their sequence. Infrastructure disappears. |
 
-`balanced` and `simplified` sit inside the standard complexity budget (SKILL.md §7). **`faithful` deliberately exceeds it** — that's the trade, and it comes with conditions:
+These detail ceilings are upper bounds. For `balanced` and `simplified`, also apply the chosen type and SKILL.md §7 budgets, using the strictest limit (normally 9 nodes and 12 edges). Split when either limit is exceeded. **`faithful` deliberately exceeds it** — that's the trade, and it comes with conditions:
 
 1. **Zoning is mandatory.** Above 9 nodes, every node belongs to a labeled zone (2–4 zones, hairline-bordered, `paper-2` fill, secondary zone label at top-left). An unzoned 20-node diagram is a wiring diagram, not a schematic.
 2. **Connector rules don't relax.** SKILL.md §6 rules 1–5 still apply at 24 nodes. If you can't route it without overlaps, you're over the real ceiling — split.
@@ -116,8 +116,7 @@ Run alongside the SKILL.md §9 taste gate.
 
 - [ ] All three dials set — explicitly requested, inferred from the destination, or defaulted and stated?
 - [ ] `viewBox` matches the size preset exactly, values divisible by 4?
-- [ ] `min-width` equals the preset's viewBox width, and the SVG sits in a local `overflow-x: auto` wrapper (inside any `overflow: hidden` ancestor)?
-- [ ] `@media print` releases `min-width` and `overflow-x`, placed after the `svg` rule?
+- [ ] SVG dimensions preserve readable text at the intended display size, with all content inside the viewBox?
 - [ ] Type ramp matches the size class — not the standard ramp on a slide?
 - [ ] 40px outer margin honoured (64px for `social-og`)?
 - [ ] Node count inside the detail level's ceiling?

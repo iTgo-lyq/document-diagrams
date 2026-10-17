@@ -6,7 +6,7 @@ Turn Mermaid source into an editorial-quality diagram as SVG at the size and det
 
 ## Trigger
 
-Load this file for `.mmd`, `.mermaid`, or Markdown containing fenced `mermaid` blocks when the user asks to convert, redraw, simplify, or present the diagram, or uses `/document-diagrams:import-mermaid`.
+Load this file for `.mmd`, `.mermaid`, or Markdown containing fenced `mermaid` blocks when the user asks to convert, redraw, simplify, or present the diagram.
 UTF-8 source files with or without a byte-order mark are accepted.
 
 ---

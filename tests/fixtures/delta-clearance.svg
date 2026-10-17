@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" role="img" aria-labelledby="delta-title delta-desc" data-diagram="architecture-delta">
+  <title id="delta-title">API version change</title>
+  <desc id="delta-desc">The API changes from v1 to v2. The store and directed write relationship remain unchanged.</desc>
+  <defs>
+    <marker id="delta-arrow" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 L2,4 z" fill="#64748b"/>
+    </marker>
+  </defs>
+  <g data-snapshot="before" data-grid="320 200 4" transform="translate(24 40)">
+    <g data-kind="component" data-object-id="api" data-status="changed" data-signature="api:v1">
+      <rect data-role="bounds" x="40" y="40" width="80" height="40" fill="#fef3c7"/>
+      <text x="48" y="64">API v1</text>
+    </g>
+    <g data-kind="component" data-object-id="store" data-status="unchanged" data-signature="store:v1">
+      <rect data-role="bounds" x="40" y="120" width="80" height="40" fill="#d1fae5"/>
+      <text x="48" y="144">Store</text>
+    </g>
+    <path data-kind="relationship" data-object-id="write" data-status="unchanged" data-signature="operation:write" data-from="api" data-to="store" d="M 80 85 V 109" fill="none" stroke="#64748b" marker-end="url(#delta-arrow)"/>
+  </g>
+  <g data-snapshot="after" data-grid="320 200 4" transform="translate(456 40)">
+    <g data-kind="component" data-object-id="api" data-status="changed" data-signature="api:v2">
+      <rect data-role="bounds" x="40" y="40" width="80" height="40" fill="#fef3c7"/>
+      <text x="48" y="64">API v2</text>
+    </g>
+    <g data-kind="component" data-object-id="store" data-status="unchanged" data-signature="store:v1">
+      <rect data-role="bounds" x="40" y="120" width="80" height="40" fill="#d1fae5"/>
+      <text x="48" y="144">Store</text>
+    </g>
+    <path data-kind="relationship" data-object-id="write" data-status="unchanged" data-signature="operation:write" data-from="api" data-to="store" d="M 80 85 V 109" fill="none" stroke="#64748b" marker-end="url(#delta-arrow)"/>
+  </g>
+  <text data-change="CHANGED" data-target="api" x="352" y="100">CHANGED API</text>
+</svg>

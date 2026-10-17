@@ -314,7 +314,7 @@ Before emitting SVG, verify **every** item:
 2. 2..4 zones; each has its uppercase label at the top-left of its zone box, on a paper-masked break in the border.
 3. Every component has `id`, `name`. `sub`, `icon`, `kind`, `color` are optional.
 4. ≤ 2 components with `kind: focal`; focal styling auto-applied (accent fill 7 %, accent stroke 1.4, italic line-1 sub).
-5. Every connector exits the right (or bottom) of source and enters the top (or left) of destination; rounded right-angle Q-bezier `r=8` at every bend; marker triangle visibly touches the destination rectangle edge.
+5. Every connector exits the right (or bottom) of source and enters the top (or left) of destination; rounded right-angle Q-bezier `r=8` at every bend; marker tip remains 5px clear of the destination rectangle edge.
 6. Connector labels sit at the **start** of the connector (not mid-segment) and are offset **perpendicular** to the line (5 px gap above for horizontal segments, 6 px gap to the right for vertical segments) — never overlapping the stroke. Paper-fill mask kept behind text; icon (when `icon:` is set) sits left of text inside the same mask.
 7. ≤ 3 custom-colored components; none on focal.
 8. ≤ 3 footer bars; each spans `viewBox_w − 2*left_pad`; no connectors emerge from any footer.
@@ -327,7 +327,7 @@ Before emitting SVG, verify **every** item:
 ## 8. Anti-patterns
 
 - **Diagonal arrows.** The NatStat replication has one (analyst → LegacyPortal). The new type forbids it — always rounded right-angle Q-bezier.
-- **Marker not touching the target.** Path ends at the centroid or stops short of the border.
+- **Incorrect marker clearance.** Path ends at the centroid, overlaps the target, or leaves an unexplained gap. Use a 5px source gap and an 11px target path gap for the filled marker.
 - **Inline `text` connector labels without a mask rect.** The connector line can bleed through the text and it becomes unreadable.
 - **Labels sitting on top of the connector line, mid-segment.** Labels belong at the *start* of the connector with a perpendicular margin (see §3.5) — burying them in the middle of the line hides the source-to-destination direction and forces the reader's eye to fight the mask.
 - **Tiny text badges as icons.** The source uses 7-px `DB` / `APP` / `EXT` badges; this type uses real 24-px catalog icons. Text badges are only acceptable as the label text, not as the component "icon."

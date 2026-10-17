@@ -23,7 +23,7 @@
 - **Focal bridge (≤1, optional):** the one contribution the chart exists to show gets the bar family's focal treatment — `accent @ 0.12` fill, `accent` stroke, accent value label. It replaces that bar's sign fill; the signed label and geometry still carry the direction.
 - **Value labels:** `arrow-label` role 10px. Totals and increases print above the bar top (baseline `top − 8`); decreases print below the bar bottom (baseline `bottom + 12`), because the space above a decrease is where its carry arrives. Deltas print with an explicit sign (`+64`, `−38`); totals print unsigned.
 - **Gridlines / axes:** identical to the bar chart — 4–6 faint horizontal gridlines `ink @ 0.08` 0.8px, y-axis line and x-axis baseline `ink @ 0.25` 1px, tick labels `arrow-label` role 10px `muted` right-aligned at x=72, rotated y-axis title `eyebrow` role 10px tracked.
-- **Category labels:** centered under each bar at y=440, `node-name` role 12px 600 `ink`; the focal bar's label may take accent.
+- **Category labels:** centered under each bar at y=440, `node-name` role 12px 600 `ink`; the focal bar's label uses `ink`.
 - **Legend:** horizontal bottom strip after a hairline rule, one key per treatment used: total, increase, decrease, focal.
 
 ### Waterfall element pattern

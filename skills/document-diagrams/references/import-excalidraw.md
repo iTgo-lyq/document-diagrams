@@ -6,7 +6,7 @@ Turn an Excalidraw board into an editorial-quality diagram as SVG at the size an
 
 ## Trigger
 
-Load this file for `.excalidraw` or `.excalidraw.json` files (saved from excalidraw.com, the desktop app, or the Obsidian plugin) when the user asks to convert, redraw, clean up, or present the board, or uses `/document-diagrams:import-excalidraw`.
+Load this file for `.excalidraw` or `.excalidraw.json` files (saved from excalidraw.com, the desktop app, or the Obsidian plugin) when the user asks to convert, redraw, clean up, or present the board.
 
 ---
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the public Architecture delta HTML contract using only the stdlib.
+"""Verify the public Architecture delta SVG contract using only the stdlib.
 
 Checks identity, snapshot membership, shared local grids, declared semantic and
 geometric changes, relationship endpoints, and exact ledger coverage. Panel
@@ -223,6 +223,37 @@ def on_perimeter(point, bounds):
             or (top - t <= y <= bottom + t and min(abs(x - left), abs(x - right)) <= t))
 
 
+def endpoint_meets_port(points, bounds, source):
+    """Project the drawn endpoint back to its boundary port along its tangent.
+
+    Filled markers use a 5px source gap and an 11px destination path gap
+    (6px tip extension plus 5px visual clearance). Endpoints must be outside
+    their node, and the projected port must still meet the declared node.
+    """
+    point = points[0] if source else points[-1]
+    neighbors = points[1:] if source else reversed(points[:-1])
+    neighbor = next((p for p in neighbors if math.dist(point, p) > EPS), None)
+    if neighbor is None:
+        return False
+    x, y = point
+    left, top, width, height = bounds
+    if left <= x <= left + width and top <= y <= top + height:
+        return False
+    dx, dy = x - neighbor[0], y - neighbor[1]
+    if abs(dy) <= EPS:
+        if not ((x < left and dx > 0) or (x > left + width and dx < 0)):
+            return False
+    elif abs(dx) <= EPS:
+        if not ((y < top and dy > 0) or (y > top + height and dy < 0)):
+            return False
+    else:
+        return False  # Boundary ports are perpendicular to their node edge.
+    length = math.hypot(dx, dy)
+    gap = 5.0 if source else 11.0
+    port = (x + gap * dx / length, y + gap * dy / length)
+    return on_perimeter(port, bounds)
+
+
 def selector_may_match(selector: str, node: Node) -> bool:
     """Conservative last-compound filter for CSS width/height on SVG objects.
 
@@ -433,8 +464,8 @@ def check_source(path: Path, source: str) -> list[str]:
                 endpoint = members.get(identity)
                 if endpoint is None or endpoint.kind != "component":
                     fail(obj.node, f"dangling relationship endpoint {identity!r}: must resolve to a component in this snapshot")
-                elif endpoint.bounds and obj.points and not on_perimeter(obj.points[0 if index == 0 else -1], endpoint.bounds):
-                    fail(obj.node, f"drawn relationship endpoint does not meet component {identity!r} perimeter")
+                elif endpoint.bounds and obj.points and not endpoint_meets_port(obj.points, endpoint.bounds, index == 0):
+                    fail(obj.node, f"relationship clearance/tangent does not resolve to component {identity!r} perimeter")
 
     before = next((members for snapshot, members in by_snapshot.items() if snapshot.attrs["data-snapshot"] == "before"), {})
     after = next((members for snapshot, members in by_snapshot.items() if snapshot.attrs["data-snapshot"] == "after"), {})
