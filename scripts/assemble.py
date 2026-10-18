@@ -567,7 +567,8 @@ def main():
     main_text = re.sub(r'\(From a repository checkout, run `[^`]+`\.\)', '(Verify label geometry in the rendered result.)', main_text)
     main_text = re.sub(r'From a repository checkout, also run .*?; from an installed skill, ', 'From the installed skill, ', main_text)
     main_text = common(main_text)
-    main_text = re.sub(r'version: "[^"]+"', 'version: "0.1.1"', main_text)
+    # Source installations are identified by their Git commit.
+    main_text = re.sub(r'^metadata:\n  version: "[^"]+"\n', '', main_text, count=1, flags=re.M)
     main_text = replace_sections(main_text, lambda h: h == '12. Output', '''## 12. Output
 
 Deliver a self-contained `.svg` file directly at the requested destination. Use inline SVG shapes, local CSS and CJK system fonts. Do not create an HTML wrapper, raster output, JavaScript controller or external asset dependency. Preserve the complete meaning in the static SVG.

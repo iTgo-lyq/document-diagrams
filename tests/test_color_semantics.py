@@ -12,7 +12,7 @@ SCRIPTS = Path(__file__).resolve().parents[1] / 'skills/document-diagrams/script
 def verifier(kind):
     spec = importlib.util.spec_from_file_location(kind, SCRIPTS / f'verify-{kind}.py')
     module = importlib.util.module_from_spec(spec)
-    # Verifiers live in the installable package, which must stay free of caches.
+    # Verifiers live in the installable skill, which must stay free of caches.
     previous = sys.dont_write_bytecode
     try:
         sys.dont_write_bytecode = True

@@ -41,13 +41,13 @@ def check_links(document, boundary, allow_external=False):
         relative = Path(unquote(parsed.path))
         resolved = (document.parent / relative).resolve()
         if relative.is_absolute() or not resolved.is_relative_to(boundary):
-            errors.append(f"{document.relative_to(boundary)}: reference leaves package: {target}")
+            errors.append(f"{document.relative_to(boundary)}: reference leaves skill directory: {target}")
         elif not resolved.exists():
             errors.append(f"{document.relative_to(boundary)}: missing reference {target}")
     return errors
 
 
-def check_package(directory):
+def check_installation(directory):
     directory = Path(directory).resolve()
     errors = []
     for required in ("SKILL.md", "LICENSE", "agents/openai.yaml"):
@@ -60,12 +60,12 @@ def check_package(directory):
     for path in sorted(directory.rglob("*")):
         relative = path.relative_to(directory)
         if path.is_symlink():
-            errors.append(f"{relative}: symbolic links are not part of the package")
+            errors.append(f"{relative}: symbolic links are not part of the installed skill")
             continue
         if relative.parts[0] not in {"SKILL.md", "LICENSE", "agents", "references", "assets", "scripts"}:
             errors.append(f"{relative}: outside the installable file layout")
         if any(part in {".git", "upstream", "vendor", "node_modules", "__pycache__"} for part in relative.parts):
-            errors.append(f"{relative}: development dependency included in package")
+            errors.append(f"{relative}: development dependency included in skill directory")
         if path.is_dir():
             continue
         if not path.is_file():
@@ -142,14 +142,14 @@ def main():
     parser.add_argument("--skill-dir", type=Path, default=SKILL)
     parser.add_argument("--source", action="store_true", help="also validate this repository's source pins")
     args = parser.parse_args()
-    errors = check_package(args.skill_dir)
+    errors = check_installation(args.skill_dir)
     if args.source:
         errors.extend(check_source())
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 1
-    print("OK: self-contained skill; package boundaries and local references checked.")
+    print("OK: self-contained skill; installation boundaries and local references checked.")
     if args.source:
         print("OK: source submodules are pinned and clean; repository links resolve.")
     print("This checks installation integrity, not diagram correctness or visual quality.")
