@@ -7,6 +7,8 @@ This maintainer tool is never included in the installed skill.
 from pathlib import Path
 import re
 import shutil
+from semantic_colors import guidance as color_guidance
+from semantic_colors import verifier as color_verifier
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'upstream/diagram-design/skills/diagram-design'
@@ -137,6 +139,7 @@ def write(relative, content):
     path = OUT / relative
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.suffix == '.md':
+        content = color_guidance(path.name, content)
         content = '\n'.join(line.rstrip() for line in content.splitlines())
     path.write_text(content.rstrip() + '\n', encoding='utf-8')
 
@@ -632,21 +635,11 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
     def _in_chart(self)''')
             text = text.replace('one HTML document', 'one SVG document')
         if name == 'verify-heatmap.py':
-            text = text.replace('Detect accent fill — warm reddish-orange. Works for both light and dark skins.', 'Detect the blue accent before alpha compositing.')
-            text = text.replace('return r >= 200 and g <= 150 and b <= 100', 'return (r, g, b) == (59, 130, 246)')
-            text = text.replace('fill (R >= 200, G <= 150, B <= 100)', 'fill (RGB 59, 130, 246)')
             text = text.replace('(245, 245, 245)', '(255, 255, 255)')
             text = text.replace('underlay rather than assuming the light paper background. In dark heatmaps, the\n    underlay is the dark paper color (#1e293b), not #ffffff.', 'underlay, with white as the default background.')
-            text = text.replace('elif _is_accent(r_ch, g_ch, b_ch):\n                    focal = True', 'elif _is_accent(r_ch, g_ch, b_ch):\n                    focal = True\n                    if _attr(attrs_str, "data-focal") != "true" and errors is not None:\n                        errors.append("accent fill requires data-focal=true")')
             text = text.replace('        rm = RGBA_RE.search(fill)', '        raw_rgb = _parse_color(fill)\n        rm = RGBA_RE.search(fill)')
             text = text.replace('                b_ch = int(rm.group(3))', '                b_ch = int(rm.group(3))\n                raw_rgb = (r_ch, g_ch, b_ch)')
-            text = text.replace('        cells.append(\n', '''        expected_rgb = (59, 130, 246) if focal else (30, 41, 59)
-        if raw_rgb != expected_rgb and errors is not None:
-            errors.append("focal cells require accent blue RGB (59,130,246); non-focal cells require ink RGB (30,41,59)")
-
-        cells.append(
-''')
-        write('scripts/' + name, text)
+        write('scripts/' + name, color_verifier(name, text))
     source = (ROOT / 'upstream/diagram-design/scripts/axonometry.py').read_text()
     # Projection and prism geometry only; skins and page builders are presentation.
     projection = '\n'.join([

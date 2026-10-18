@@ -75,23 +75,31 @@ class RuntimeTests(unittest.TestCase):
     def test_dumbbell_domain_and_actual_palette_contract(self):
         self.run_helper('verify-dumbbell.py')
 
-    def test_heatmap_enforces_the_blue_focal_budget(self):
+    def test_heatmap_color_is_independent_of_focus_but_ramp_is_preserved(self):
         source = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200">
         <rect width="100%" height="100%" fill="#ffffff"/>
         <text data-row-label="R" x="10" y="80">R</text>
         <text data-col="C1" x="100" y="30">C1</text>
         <text data-col="C2" x="220" y="30">C2</text>
-        <rect data-row="R" data-col="C1" data-value="1" x="60" y="50" width="100" height="60" fill="rgba(30,41,59,0.1)"/>
-        <rect data-row="R" data-col="C2" data-value="2" data-focal="true" x="180" y="50" width="100" height="60" fill="rgba(59,130,246,0.2)"/>
+        <text data-col="C3" x="340" y="30">C3</text>
+        <rect data-row="R" data-col="C1" data-value="1" x="60" y="50" width="100" height="60" fill="rgba(59,130,246,0.1)"/>
+        <rect data-row="R" data-col="C2" data-value="2" x="180" y="50" width="100" height="60" fill="rgba(59,130,246,0.2)"/>
+        <rect data-row="R" data-col="C3" data-value="3" data-focal="true" x="300" y="50" width="100" height="60" fill="rgba(168,85,247,0.3)"/>
         </svg>'''
         path = self.work / 'heatmap.svg'
         path.write_text(source)
         self.run_helper('verify-heatmap.py', path)
+        path.write_text(source.replace('rgba(168,85,247,0.3)', '#f3e8ff'))
+        self.run_helper('verify-heatmap.py', path)
+        # An all-blue ramp with no focal cell also passes.
+        path.write_text(source.replace(' data-focal="true"', '').replace('168,85,247', '59,130,246'))
+        self.run_helper('verify-heatmap.py', path)
         for bad, message in [
-                (source.replace('rgba(30,41,59,0.1)', 'rgba(59,130,246,0.1)'), 'found 2 focal cells'),
-                (source.replace(' data-focal="true"', ''), 'accent fill requires data-focal=true'),
-                (source.replace('rgba(59,130,246,0.2)', 'rgba(234,88,12,0.85)'), 'require accent blue RGB'),
-                (source.replace('rgba(30,41,59,0.1)', 'rgba(37,99,235,0.3)'), 'require ink RGB')]:
+                (source.replace('data-value="1"', 'data-value="1" data-focal="true"'), 'found 2 focal cells'),
+                (source.replace('rgba(59,130,246,0.1)', 'rgba(34,197,94,0.1)'), 'share one hue'),
+                (source.replace('rgba(59,130,246,0.1)', 'rgba(59,130,246,0.6)'), 'non-decreasing'),
+                (source.replace('data-value="2"', 'data-value="1"'), 'same value'),
+                (source.replace('rgba(168,85,247,0.3)', 'rgba(234,88,12,0.3)'), 'semantic palette hue')]:
             with self.subTest(message=message):
                 path.write_text(bad)
                 result = subprocess.run(

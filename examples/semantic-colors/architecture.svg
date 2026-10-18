@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="semantic-architecture-title semantic-architecture-desc">
+<title id="semantic-architecture-title">文档处理服务 · 架构图</title>
+<desc id="semantic-architecture-desc">虚构示例：上传门户经接入 API 调用解析服务，解析服务调用格式归一与 AI 分析，分析服务调用敏感处理并写入结果库，结果供报告门户读取；五色表示职责，解析服务是唯一焦点。</desc>
+<defs><style>text { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }</style>
+<marker id="semantic-architecture-arrow-input" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 L2,4 z" fill="#1e40af"/></marker>
+<marker id="semantic-architecture-arrow-process" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 L2,4 z" fill="#b45309"/></marker>
+<marker id="semantic-architecture-arrow-data" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 L2,4 z" fill="#166534"/></marker>
+<marker id="semantic-architecture-arrow-analysis" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 L2,4 z" fill="#6b21a8"/></marker>
+<marker id="semantic-architecture-arrow-sensitive" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 L2,4 z" fill="#9d174d"/></marker>
+<marker id="semantic-architecture-arrow-neutral" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 L2,4 z" fill="#64748b"/></marker>
+</defs>
+<rect x="0" y="0" width="1280" height="720" rx="0" fill="#ffffff"/>
+<text x="40" y="64" font-size="28" fill="#1e293b" font-weight="600" text-anchor="start">文档处理服务 · 架构图</text>
+<text x="40" y="100" font-size="16" fill="#64748b" font-weight="400" text-anchor="start">示例架构：颜色区分组件职责，焦点保留所属角色的颜色。</text>
+<rect x="40" y="144" width="208" height="404" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="0.8"/>
+<text x="64" y="180" font-size="16" fill="#64748b" font-weight="600" text-anchor="start">接入层</text>
+<rect x="280" y="144" width="600" height="404" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="0.8"/>
+<text x="304" y="180" font-size="16" fill="#64748b" font-weight="600" text-anchor="start">处理层</text>
+<rect x="912" y="144" width="328" height="404" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="0.8"/>
+<text x="936" y="180" font-size="16" fill="#64748b" font-weight="600" text-anchor="start">数据与交付层</text>
+<path d="M144 309 V397" fill="none" stroke="#1e40af" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-input)"/>
+<path d="M229 456 H325" fill="none" stroke="#1e40af" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-input)"/>
+<path d="M432 403 V315" fill="none" stroke="#b45309" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-process)"/>
+<path d="M533 456 H613" fill="none" stroke="#6b21a8" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-analysis)"/>
+<path d="M720 403 V315" fill="none" stroke="#9d174d" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-sensitive)"/>
+<path d="M821 456 H957" fill="none" stroke="#166534" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-data)"/>
+<path d="M1072 403 V315" fill="none" stroke="#166534" stroke-width="1.2" marker-end="url(#semantic-architecture-arrow-data)"/>
+<rect x="152" y="340" width="64" height="24" rx="2" fill="#ffffff"/><text x="184.0" y="358" font-size="16" fill="#1e40af" font-weight="400" text-anchor="middle">提交</text>
+<rect x="236" y="424" width="88" height="24" rx="2" fill="#ffffff"/><text x="280.0" y="442" font-size="16" fill="#1e40af" font-weight="400" text-anchor="middle">调用解析</text>
+<rect x="440" y="344" width="80" height="24" rx="2" fill="#ffffff"/><text x="480.0" y="362" font-size="16" fill="#b45309" font-weight="400" text-anchor="middle">归一请求</text>
+<rect x="536" y="424" width="80" height="24" rx="2" fill="#ffffff"/><text x="576.0" y="442" font-size="16" fill="#6b21a8" font-weight="400" text-anchor="middle">请求分析</text>
+<rect x="728" y="344" width="96" height="24" rx="2" fill="#ffffff"/><text x="776.0" y="362" font-size="16" fill="#9d174d" font-weight="400" text-anchor="middle">分析前筛查</text>
+<rect x="848" y="424" width="88" height="24" rx="2" fill="#ffffff"/><text x="892.0" y="442" font-size="16" fill="#166534" font-weight="400" text-anchor="middle">写入结果</text>
+<rect x="1080" y="344" width="80" height="24" rx="2" fill="#ffffff"/><text x="1120.0" y="362" font-size="16" fill="#166534" font-weight="400" text-anchor="middle">提供结果</text>
+<g data-node-id="上传门户" data-semantic-role="input">
+<rect x="64" y="208" width="160" height="96" rx="6" fill="#ffffff"/>
+<rect x="64" y="208" width="160" height="96" rx="6" fill="#dbeafe" stroke="#1e40af" stroke-width="1"/>
+<rect x="80" y="220" width="48" height="20" rx="2" fill="none" stroke="#3b82f6" stroke-width="0.8"/>
+<text x="104" y="235" font-size="12" fill="#1e40af" font-weight="400" text-anchor="middle">入口</text>
+<text x="144.0" y="266" font-size="20" fill="#1e40af" font-weight="600" text-anchor="middle">上传门户</text>
+</g>
+<g data-node-id="接入 API" data-semantic-role="input">
+<rect x="64" y="408" width="160" height="96" rx="6" fill="#ffffff"/>
+<rect x="64" y="408" width="160" height="96" rx="6" fill="#dbeafe" stroke="#1e40af" stroke-width="1"/>
+<rect x="80" y="420" width="48" height="20" rx="2" fill="none" stroke="#3b82f6" stroke-width="0.8"/>
+<text x="104" y="435" font-size="12" fill="#1e40af" font-weight="400" text-anchor="middle">接入</text>
+<text x="144.0" y="466" font-size="20" fill="#1e40af" font-weight="600" text-anchor="middle">接入 API</text>
+</g>
+<g data-node-id="格式归一" data-semantic-role="process">
+<rect x="336" y="208" width="192" height="96" rx="6" fill="#ffffff"/>
+<rect x="336" y="208" width="192" height="96" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="1"/>
+<rect x="352" y="220" width="48" height="20" rx="2" fill="none" stroke="#f59e0b" stroke-width="0.8"/>
+<text x="376" y="235" font-size="12" fill="#b45309" font-weight="400" text-anchor="middle">处理</text>
+<text x="432.0" y="266" font-size="20" fill="#b45309" font-weight="600" text-anchor="middle">格式归一</text>
+</g>
+<g data-node-id="解析服务" data-semantic-role="process">
+<rect x="336" y="408" width="192" height="96" rx="6" fill="#ffffff"/>
+<rect x="336" y="408" width="192" height="96" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="1.5" data-focal="true"/>
+<rect x="352" y="420" width="48" height="20" rx="2" fill="none" stroke="#f59e0b" stroke-width="0.8"/>
+<text x="376" y="435" font-size="12" fill="#b45309" font-weight="400" text-anchor="middle">处理</text>
+<text x="512" y="435" font-size="12" fill="#b45309" font-weight="700" text-anchor="end">焦点</text>
+<text x="432.0" y="466" font-size="20" fill="#b45309" font-weight="700" text-anchor="middle">解析服务</text>
+<text x="432.0" y="490" font-size="16" fill="#b45309" font-weight="400" text-anchor="middle">文本 · 表格 · 结构</text>
+</g>
+<g data-node-id="敏感处理" data-semantic-role="sensitive">
+<rect x="624" y="208" width="192" height="96" rx="6" fill="#ffffff"/>
+<rect x="624" y="208" width="192" height="96" rx="6" fill="#fce7f3" stroke="#9d174d" stroke-width="1"/>
+<rect x="640" y="220" width="48" height="20" rx="2" fill="none" stroke="#ec4899" stroke-width="0.8"/>
+<text x="664" y="235" font-size="12" fill="#9d174d" font-weight="400" text-anchor="middle">安全</text>
+<text x="720.0" y="266" font-size="20" fill="#9d174d" font-weight="600" text-anchor="middle">敏感处理</text>
+<text x="720.0" y="290" font-size="16" fill="#9d174d" font-weight="400" text-anchor="middle">筛查 · 脱敏</text>
+</g>
+<g data-node-id="AI 分析" data-semantic-role="analysis">
+<rect x="624" y="408" width="192" height="96" rx="6" fill="#ffffff"/>
+<rect x="624" y="408" width="192" height="96" rx="6" fill="#f3e8ff" stroke="#6b21a8" stroke-width="1"/>
+<rect x="640" y="420" width="48" height="20" rx="2" fill="none" stroke="#a855f7" stroke-width="0.8"/>
+<text x="664" y="435" font-size="12" fill="#6b21a8" font-weight="400" text-anchor="middle">分析</text>
+<text x="720.0" y="466" font-size="20" fill="#6b21a8" font-weight="600" text-anchor="middle">AI 分析</text>
+<text x="720.0" y="490" font-size="16" fill="#6b21a8" font-weight="400" text-anchor="middle">摘要 · 要点提取</text>
+</g>
+<g data-node-id="报告门户" data-semantic-role="data">
+<rect x="968" y="208" width="208" height="96" rx="6" fill="#ffffff"/>
+<rect x="968" y="208" width="208" height="96" rx="6" fill="#d1fae5" stroke="#166534" stroke-width="1"/>
+<rect x="984" y="220" width="48" height="20" rx="2" fill="none" stroke="#22c55e" stroke-width="0.8"/>
+<text x="1008" y="235" font-size="12" fill="#166534" font-weight="400" text-anchor="middle">输出</text>
+<text x="1072.0" y="266" font-size="20" fill="#166534" font-weight="600" text-anchor="middle">报告门户</text>
+</g>
+<g data-node-id="结果库" data-semantic-role="data">
+<rect x="968" y="408" width="208" height="96" rx="6" fill="#ffffff"/>
+<rect x="968" y="408" width="208" height="96" rx="6" fill="#d1fae5" stroke="#166534" stroke-width="1"/>
+<rect x="984" y="420" width="48" height="20" rx="2" fill="none" stroke="#22c55e" stroke-width="0.8"/>
+<text x="1008" y="435" font-size="12" fill="#166534" font-weight="400" text-anchor="middle">存储</text>
+<text x="1072.0" y="466" font-size="20" fill="#166534" font-weight="600" text-anchor="middle">结果库</text>
+<text x="1072.0" y="490" font-size="16" fill="#166534" font-weight="400" text-anchor="middle">结构化结果</text>
+</g>
+<path d="M432 556 Q432 536 432 508" fill="none" stroke="#b45309" stroke-width="1" stroke-dasharray="4,3"/>
+<circle cx="432" cy="508" r="2" fill="#b45309"/>
+<text x="336" y="584" font-size="20" fill="#b45309" font-weight="600" text-anchor="start">本图焦点：解析服务</text>
+<text x="336" y="612" font-size="16" fill="#64748b" font-weight="400" text-anchor="start">同属处理角色的“格式归一”仍保留橙色。</text>
+<line x1="40" y1="636" x2="1240" y2="636" stroke="#94a3b8" stroke-width="0.8"/>
+<rect x="40" y="660" width="16" height="16" rx="3" fill="#dbeafe" stroke="#1e40af" stroke-width="1"/>
+<text x="64" y="674" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">输入 / 主路径</text>
+<rect x="220" y="660" width="16" height="16" rx="3" fill="#fef3c7" stroke="#b45309" stroke-width="1"/>
+<text x="244" y="674" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">处理 / 进行中</text>
+<rect x="400" y="660" width="16" height="16" rx="3" fill="#d1fae5" stroke="#166534" stroke-width="1"/>
+<text x="424" y="674" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">数据 / 输出</text>
+<rect x="580" y="660" width="16" height="16" rx="3" fill="#f3e8ff" stroke="#6b21a8" stroke-width="1"/>
+<text x="604" y="674" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">AI / 分析</text>
+<rect x="760" y="660" width="16" height="16" rx="3" fill="#fce7f3" stroke="#9d174d" stroke-width="1"/>
+<text x="784" y="674" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">敏感 / 警示</text>
+<rect x="1016" y="660" width="20" height="16" rx="3" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+<text x="1048" y="674" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">粗描边表示焦点</text>
+</svg>
