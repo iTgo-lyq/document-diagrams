@@ -15,6 +15,11 @@ from complexity import runtime as complexity_runtime
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'upstream/diagram-design/skills/diagram-design'
 OUT = ROOT / 'skills/document-diagrams'
+DESCRIPTION = (
+    '编写文档时，若涉及较复杂的组件关系、处理流程、状态流转或数据表达，'
+    '可依据当前项目材料选择适合的图形补充 SVG 图表。'
+    '也用于明确绘图，以及从 Mermaid、draw.io、Excalidraw 重绘的请求。'
+)
 FONT = "'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif"
 COLORS = {
     '#f5f5f5': '#ffffff', '#2d3142': '#1e293b', '#4f5d75': '#64748b',
@@ -545,6 +550,7 @@ def main():
         old.unlink()
 
     main_text = (BASE / 'SKILL.md').read_text()
+    main_text = re.sub(r'^description: .+$', 'description: ' + DESCRIPTION, main_text, count=1, flags=re.M)
     main_text = re.sub(r'6\. Decorative-only SVG[^\n]*', '6. Decorative-only SVG carries `aria-hidden="true"` instead.', main_text)
     main_text = replace_sections(main_text, lambda h: h.startswith(('0.', '5.', '8.', '10.')), lambda h: {
         '0.': '',
