@@ -38,3 +38,25 @@
 - **分类面积图：** 用 Marimekko 表达三个渠道、三个类别的交叉数量，明确数量表和单位。一个类别用蓝色，一个紫色类别中的单元格是焦点，其他类别也需要稳定的颜色与图例。
 
 评审关注点：对应角色保留蓝、橙、绿、紫、粉语义色，非焦点不退成全灰；Parser 保持处理色，只增加焦点强调。蓝色类别在多列重复不计作多个焦点；紫色焦点保持类别颜色并声明 `data-focal="true"`。数量、面积、分组、连线和图形预算保持类型规则，颜色不能替代标签或关系符号。对照热力图、蜂群图和瀑布图时，仍须保留单色单调深浅、统一非焦点填充和增量填充／减量空心。
+
+## 技术图密度回归
+
+- **完整技术图：** 将下列 Mermaid 图按 `faithful` 重绘，保留全部组件和关系，自行选择画布与分区。
+- **多参与方时序：** 绘制浏览器、网关、认证、业务服务、队列、Worker、数据库之间的请求、异步处理与回调，包含超时、重试和失败结果。
+
+```mermaid
+flowchart LR
+  subgraph 入口
+    Client --> DNS --> CDN --> WAF --> LB --> Gateway --> Auth --> Quota --> Router --> API
+  end
+  subgraph 处理
+    Queue --> Scheduler --> Worker --> Parser --> Validator --> Enricher --> Model --> Aggregator --> Formatter --> Exporter
+  end
+  subgraph 数据
+    Cache --> Metadata --> ObjectStore --> EventLog --> Index --> Search --> Warehouse --> Metrics --> Report --> Archive
+  end
+  API --> Queue
+  Exporter --> Cache
+```
+
+评审关注点：按目标阅读尺寸检查分组、文字与连线的可读性，完整呈现关键组件、分支和关系。拆图后关系可追踪，取消、失败等不同结果保持独立。

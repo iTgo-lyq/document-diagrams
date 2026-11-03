@@ -1338,8 +1338,8 @@ def digest(
                 f"{info['edges_dangling']} dangling), cycle: {info['has_cycle']}",
                 f"- shapes: {info['shapes']}",
                 f"- type candidates: {', '.join(info['type_candidates'])}",
-                f"- budget: nodes {'OVER' if info['over_node_budget'] else 'ok'} (max 9), "
-                f"edges {'OVER' if info['over_edge_budget'] else 'ok'} (max 12)",
+                f"- density review: nodes {'review' if info['over_node_budget'] else 'ok'} (guide 9), "
+                f"edges {'review' if info['over_edge_budget'] else 'ok'} (guide 12; advisory)",
             ]
         )
         if diagram.discarded["style_directives"] or diagram.discarded["click_handlers"]:

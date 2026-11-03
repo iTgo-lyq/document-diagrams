@@ -586,8 +586,8 @@ def digest(path: Path, scene: Scene, max_rows: int) -> str:
     out.append(f"- shapes: {info['shapes']}")
     out.append(f"- type candidates: {', '.join(info['type_candidates'])}")
     out.append(
-        f"- budget: nodes {'OVER' if info['over_node_budget'] else 'ok'} (max 9), "
-        f"edges {'OVER' if info['over_edge_budget'] else 'ok'} (max 12)"
+        f"- density review: nodes {'review' if info['over_node_budget'] else 'ok'} (guide 9), "
+        f"edges {'review' if info['over_edge_budget'] else 'ok'} (guide 12; advisory)"
     )
     dropped = {key: count for key, count in scene.discarded.items() if count}
     if dropped:

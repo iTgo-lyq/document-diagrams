@@ -822,8 +822,8 @@ def digest(path: Path, pages: list[Page], selected: list[Page], max_rows: int) -
         out.append(f"- shapes: {info['shapes']}")
         out.append(f"- type candidates: {', '.join(info['type_candidates'])}")
         out.append(
-            f"- budget: nodes {'OVER' if info['over_node_budget'] else 'ok'} (max 9), "
-            f"edges {'OVER' if info['over_edge_budget'] else 'ok'} (max 12)"
+            f"- density review: nodes {'review' if info['over_node_budget'] else 'ok'} (guide 9), "
+            f"edges {'review' if info['over_edge_budget'] else 'ok'} (guide 12; advisory)"
         )
         if info["hubs"]:
             hubs = ", ".join(

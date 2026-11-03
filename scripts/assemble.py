@@ -9,6 +9,8 @@ import re
 import shutil
 from semantic_colors import guidance as color_guidance
 from semantic_colors import verifier as color_verifier
+from complexity import guidance as complexity_guidance
+from complexity import runtime as complexity_runtime
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = ROOT / 'upstream/diagram-design/skills/diagram-design'
@@ -140,6 +142,7 @@ def write(relative, content):
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.suffix == '.md':
         content = color_guidance(path.name, content)
+        content = complexity_guidance(path.name, content)
         content = '\n'.join(line.rstrip() for line in content.splitlines())
     path.write_text(content.rstrip() + '\n', encoding='utf-8')
 
@@ -458,8 +461,6 @@ def main():
                     sizing = False
             text = '\n'.join(rows)
             text = re.sub(r'^.*Requested non-HTML formats.*$', '- [ ] Standalone SVG passes XML, accessibility and structural checks?', text, flags=re.M)
-            text = text.replace('`balanced` and `simplified` sit inside the standard complexity budget (SKILL.md §7).',
-                'These detail ceilings are upper bounds. For `balanced` and `simplified`, also apply the chosen type and SKILL.md §7 budgets, using the strictest limit (normally 9 nodes and 12 edges). Split when either limit is exceeded.')
         if path.name == 'type-architecture-delta.md':
             text = text.replace("The path's start meets the source rectangle's perimeter and its end meets the target's perimeter, within 2px for stroke/arrow-cap rounding.",
                 "Use the filled marker from visual-style.md. Start 5px outside the source boundary port and end 11px before the target boundary port along the path tangent. The arrow tip then clears the target by 5px. The verifier projects each endpoint along its tangent back to its declared component perimeter, with 2px tolerance for rounding; a nearby but misdirected endpoint does not pass.")
@@ -582,7 +583,7 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
     # Importers extract source semantics; the only image output is SVG.
     for name in ['drawio_extract.py', 'mermaid_extract.py', 'excalidraw_extract.py']:
         text = (BASE / 'scripts' / name).read_text().replace('diagram-design', 'document-diagrams')
-        write('scripts/' + name, text)
+        write('scripts/' + name, complexity_runtime(name, text))
 
     # Only diagram validators referenced by installed guidance are needed.
     validators = set()
@@ -640,7 +641,7 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
             text = text.replace('underlay rather than assuming the light paper background. In dark heatmaps, the\n    underlay is the dark paper color (#1e293b), not #ffffff.', 'underlay, with white as the default background.')
             text = text.replace('        rm = RGBA_RE.search(fill)', '        raw_rgb = _parse_color(fill)\n        rm = RGBA_RE.search(fill)')
             text = text.replace('                b_ch = int(rm.group(3))', '                b_ch = int(rm.group(3))\n                raw_rgb = (r_ch, g_ch, b_ch)')
-        write('scripts/' + name, color_verifier(name, text))
+        write('scripts/' + name, complexity_runtime(name, color_verifier(name, text)))
     source = (ROOT / 'upstream/diagram-design/scripts/axonometry.py').read_text()
     # Projection and prism geometry only; skins and page builders are presentation.
     projection = '\n'.join([
