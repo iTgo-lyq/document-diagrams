@@ -85,7 +85,7 @@ def check_installation(directory):
             errors.extend(check_links(path, directory))
             for target in SVG_NAME.findall(path.read_text(encoding="utf-8")):
                 name = Path(target).name
-                if name in SVG_PLACEHOLDERS or name.endswith('.drawio.svg'):
+                if name in SVG_PLACEHOLDERS:
                     continue
                 candidates = [(directory / target).resolve(), (path.parent / target).resolve()]
                 exists = (name in svg_names if '/' not in target else

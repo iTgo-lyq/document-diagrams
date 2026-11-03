@@ -1,5 +1,4 @@
 """Validate shipped templates and helpers in an isolated installation."""
-import json
 import os
 from pathlib import Path
 import re
@@ -50,9 +49,11 @@ class RuntimeTests(unittest.TestCase):
 
     def test_output_resources_are_svg_only(self):
         self.assertEqual([p.name for p in (self.skill / 'assets').iterdir()], ['template.svg'])
-        for name in ['export_svg.py', 'export_png.py', 'self_check.py', 'verify-motion.py']:
+        for name in ['export_svg.py', 'export_png.py', 'self_check.py', 'verify-motion.py',
+                     'drawio_extract.py', 'mermaid_extract.py', 'excalidraw_extract.py']:
             self.assertFalse((self.skill / 'scripts' / name).exists())
-        for name in ['animation.md', 'export.md', 'export-registry.md']:
+        for name in ['animation.md', 'export.md', 'export-registry.md',
+                     'import-drawio.md', 'import-mermaid.md', 'import-excalidraw.md']:
             self.assertFalse((self.skill / 'references' / name).exists())
         for document in [self.skill / 'SKILL.md', *(self.skill / 'references').glob('*.md')]:
             self.assertNotIn('<foreignObject', document.read_text(), document.name)
@@ -156,15 +157,56 @@ class RuntimeTests(unittest.TestCase):
             self.assertEqual(target - coords[-1] - extension, 5)
         self.assertEqual(len(paths), 2)
 
-    def test_mermaid_preserves_decision_labels_and_return_path(self):
-        source = self.work / 'flow.mmd'
-        source.write_text('flowchart LR\n A[Request] --> B{Valid?}\n B -->|yes| C[Store]\n B -.->|no| A\n')
-        data = json.loads(self.run_helper('mermaid_extract.py', source, '--json'))
-        diagram = data['diagrams'][0]
-        self.assertEqual(len(diagram['nodes']), 3)
-        self.assertEqual(len(diagram['edges']), 3)
-        self.assertIn('yes', json.dumps(diagram))
-        self.assertIn('no', json.dumps(diagram))
+    def test_large_containment_keeps_scope_semantics(self):
+        groups = []
+        for band in range(3):
+            top = 24 + band * 280
+            groups.append(f'<rect data-role="bounds" data-scope-id="a{band}" data-scope-kind="admin" '
+                          f'x="24" y="{top}" width="1536" height="256" rx="4" stroke-dasharray="4,4"/>')
+            for scope in range(5):
+                left, scope_top = 40 + scope * 288, top + 48
+                scope_id = f't{band}-{scope}'
+                groups.append(f'<rect data-role="bounds" data-scope-id="{scope_id}" data-scope-kind="traffic" '
+                              f'data-parent="a{band}" x="{left}" y="{scope_top}" width="256" height="160" rx="8"/>')
+                for node in range(2):
+                    groups.append(f'<g data-node-id="n{band}-{scope}-{node}" data-kind="compute" data-parent="{scope_id}">'
+                                  f'<rect data-role="bounds" x="{left + 24 + node * 112}" y="{scope_top + 56}" width="80" height="40"/></g>')
+        source = '<svg xmlns="http://www.w3.org/2000/svg" data-grammar="architecture-containment" viewBox="0 0 1600 880">' + ''.join(groups) + '</svg>'
+        path = self.work / 'large-containment.svg'
+        path.write_text(source)
+        self.run_helper('verify-architecture-containment.py', path)
+        path.write_text(source.replace('data-kind="compute"', 'data-kind="managed"', 1))
+        result = subprocess.run([sys.executable, str(self.skill / 'scripts/verify-architecture-containment.py'), str(path)],
+                                cwd=self.work, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn('managed node must parent to an admin band', result.stdout + result.stderr)
+
+    def test_large_delta_keeps_complete_change_coverage(self):
+        count = 30
+        template = (ROOT / 'tests/fixtures/delta-clearance.svg').read_text()
+        defs = re.search(r'<defs>.*?</defs>', template, re.S).group()
+        panels = []
+        for version, snapshot, offset in [(1, 'before', 24), (2, 'after', 4200)]:
+            edges = ''.join(
+                f'<path data-kind="relationship" data-object-id="e{i}" data-status="unchanged" data-signature="write" '
+                f'data-from="n{i}" data-to="n{i + 1}" d="M {40 + i * 128 + 85} 60 H {40 + (i + 1) * 128 - 11}" '
+                'fill="none" stroke="#64748b" marker-end="url(#delta-arrow)"/>' for i in range(count - 1))
+            nodes = ''.join(
+                f'<g data-kind="component" data-object-id="n{i}" data-status="changed" data-signature="n{i}:v{version}">'
+                f'<rect data-role="bounds" x="{40 + i * 128}" y="40" width="80" height="40"/>'
+                f'<text x="{48 + i * 128}" y="64">Node {i}</text></g>' for i in range(count))
+            panels.append(f'<g data-snapshot="{snapshot}" data-grid="4096 160 4" transform="translate({offset} 40)">{edges}{nodes}</g>')
+        ledger = ''.join(f'<text data-change="CHANGED" data-target="n{i}" x="{24 + i * 128}" y="240">CHANGED Node {i}</text>'
+                         for i in range(count))
+        source = '<svg xmlns="http://www.w3.org/2000/svg" data-diagram="architecture-delta" viewBox="0 0 8400 300">' + defs + ''.join(panels) + ledger + '</svg>'
+        path = self.work / 'large-delta.svg'
+        path.write_text(source)
+        self.run_helper('verify-architecture-delta.py', path)
+        path.write_text(re.sub(r'<text data-change="CHANGED" data-target="n0"[^>]*>.*?</text>', '', source))
+        result = subprocess.run([sys.executable, str(self.skill / 'scripts/verify-architecture-delta.py'), str(path)],
+                                cwd=self.work, text=True, capture_output=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn('missing ledger coverage: CHANGED n0', result.stdout + result.stderr)
 
     def test_delta_accepts_filled_marker_clearance_in_each_direction(self):
         source = (ROOT / 'tests/fixtures/delta-clearance.svg').read_text()
