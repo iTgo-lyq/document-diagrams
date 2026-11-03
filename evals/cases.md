@@ -41,22 +41,13 @@
 
 ## 技术图密度回归
 
-- **完整技术图：** 将下列 Mermaid 图按 `faithful` 重绘，保留全部组件和关系，自行选择画布与分区。
+- **完整技术图：** 根据以下组件与关系绘制 SVG，保留全部组件和关系，自行选择画布与分区。
 - **多参与方时序：** 绘制浏览器、网关、认证、业务服务、队列、Worker、数据库之间的请求、异步处理与回调，包含超时、重试和失败结果。
 
-```mermaid
-flowchart LR
-  subgraph 入口
-    Client --> DNS --> CDN --> WAF --> LB --> Gateway --> Auth --> Quota --> Router --> API
-  end
-  subgraph 处理
-    Queue --> Scheduler --> Worker --> Parser --> Validator --> Enricher --> Model --> Aggregator --> Formatter --> Exporter
-  end
-  subgraph 数据
-    Cache --> Metadata --> ObjectStore --> EventLog --> Index --> Search --> Warehouse --> Metrics --> Report --> Archive
-  end
-  API --> Queue
-  Exporter --> Cache
-```
+组件分为三个区域，各区域按所列顺序依次连接；API 连接 Queue，Exporter 连接 Cache。
+
+- 入口：Client、DNS、CDN、WAF、LB、Gateway、Auth、Quota、Router、API。
+- 处理：Queue、Scheduler、Worker、Parser、Validator、Enricher、Model、Aggregator、Formatter、Exporter。
+- 数据：Cache、Metadata、ObjectStore、EventLog、Index、Search、Warehouse、Metrics、Report、Archive。
 
 评审关注点：按目标阅读尺寸检查分组、文字与连线的可读性，完整呈现关键组件、分支和关系。拆图后关系可追踪，取消、失败等不同结果保持独立。

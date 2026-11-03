@@ -18,7 +18,7 @@ OUT = ROOT / 'skills/document-diagrams'
 DESCRIPTION = (
     '编写文档时，若涉及较复杂的组件关系、处理流程、状态流转或数据表达，'
     '可依据当前项目材料选择适合的图形补充 SVG 图表。'
-    '也用于明确绘图，以及从 Mermaid、draw.io、Excalidraw 重绘的请求。'
+    '也用于明确的绘图请求。'
 )
 FONT = "'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif"
 COLORS = {
@@ -283,7 +283,7 @@ def icon_guidance():
              'Use a small generic outline drawn from basic SVG shapes in a 24×24 slot; '
              'use the shared stroke/text colors and keep the visible component label. '
              'Product names can be labels instead of logos. Do not fetch or embed external images.', '',
-             'The following identifiers are accepted in type inputs. Preserve their meaning when importing; '
+             'The following identifiers are accepted in type inputs. Preserve their meaning in the diagram; '
              'if there is no suitable local symbol, use a labeled box. Decorative symbols carry `aria-hidden="true"`.', '']
     for _, level, title in sections(source):
         if level == 2 and title not in {'Usage', 'License attribution'}:
@@ -424,8 +424,7 @@ def main():
     # Runtime references: retain all 45 type grammars and non-style workflows.
     extra = ['semantic-patterns.md', 'layout-budget.md', 'primitives-core.md',
              'primitive-annotation.md', 'primitive-icons.md',
-             'output-spec.md', 'import-drawio.md', 'import-mermaid.md',
-             'import-excalidraw.md']
+             'output-spec.md']
     for path in sorted((BASE / 'references').glob('type-*.md')) + [BASE / 'references' / n for n in extra]:
         text = adapt_reference(path)
         if path.name == 'primitives-core.md':
@@ -541,9 +540,6 @@ def main():
             text = icon_guidance()
         if path.name == 'type-heatmap.md':
             text = text.replace('Flip text color to paper when fill opacity ≥ 0.40 (the ink ramp becomes dark enough to carry white); keep ink text below that threshold.', 'Choose `ink` or `paper` text by measuring the actual composited fill; use whichever reaches 4.5:1. Do not use a fixed opacity threshold to infer contrast.')
-        if path.name == 'import-drawio.md':
-            # The source color is input data, not an output token.
-            text = text.replace('`#f8cecc` / `#ec4899`', '`#f8cecc` / `#b85450`')
         write('references/' + path.name, svg_scope(finish_guidance(text)))
     old = OUT / 'references/diagram-types.md'
     if old.exists():
@@ -551,6 +547,9 @@ def main():
 
     main_text = (BASE / 'SKILL.md').read_text()
     main_text = re.sub(r'^description: .+$', 'description: ' + DESCRIPTION, main_text, count=1, flags=re.M)
+    main_text = re.sub(r'^\| Reproducing Mermaid.*\n', '', main_text, flags=re.M)
+    main_text = re.sub(r'^- \[ \] If this is an import.*\n', '', main_text, flags=re.M)
+    main_text = main_text.replace('**Type fit:**\n', '**Type fit:**\n\n- [ ] Size, detail and audience chosen; `viewBox` and type ramp match the intended display? (§11)')
     main_text = re.sub(r'6\. Decorative-only SVG[^\n]*', '6. Decorative-only SVG carries `aria-hidden="true"` instead.', main_text)
     main_text = replace_sections(main_text, lambda h: h.startswith(('0.', '5.', '8.', '10.')), lambda h: {
         '0.': '',
@@ -576,20 +575,22 @@ def main():
     main_text = common(main_text)
     # Source installations are identified by their Git commit.
     main_text = re.sub(r'^metadata:\n  version: "[^"]+"\n', '', main_text, count=1, flags=re.M)
+    main_text = replace_sections(main_text, lambda h: h.startswith('11.'), '''## 11. Output settings
+
+Choose size, detail and audience from [output-spec.md](references/output-spec.md) before drawing. Infer them from the document and intended display; clarify choices that materially affect the result. Use §7 to assess grouping, density and splitting.
+
+---
+
+''')
     main_text = replace_sections(main_text, lambda h: h == '12. Output', '''## 12. Output
 
 Deliver a self-contained `.svg` file directly at the requested destination. Use inline SVG shapes, local CSS and CJK system fonts. Do not create an HTML wrapper, raster output, JavaScript controller or external asset dependency. Preserve the complete meaning in the static SVG.
 
 Follow the six-point [accessible SVG contract](references/primitives-core.md#accessible-svg-contract): role and naming attributes, title first, diagram-prefixed unique IDs, a short title, a content description, and hidden decorative-only symbols.
 
-Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen type and semantic pattern references for additional checks, using their documented arguments; some checks validate rule constants and do not accept an SVG path. Where no extra command is provided, use the reference's checklist. Inspect the rendered figure at the intended display width; automated checks cannot establish text fit, contrast, or factual correctness. Report material simplifications from an import alongside the file.
+Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen type and semantic pattern references for additional checks, using their documented arguments; some checks validate rule constants and do not accept an SVG path. Where no extra command is provided, use the reference's checklist. Inspect the rendered figure at the intended display width; automated checks cannot establish text fit, contrast, or factual correctness. Report material grouping or omissions alongside the file.
 ''')
     write('SKILL.md', svg_scope(finish_guidance(main_text)))
-
-    # Importers extract source semantics; the only image output is SVG.
-    for name in ['drawio_extract.py', 'mermaid_extract.py', 'excalidraw_extract.py']:
-        text = (BASE / 'scripts' / name).read_text().replace('diagram-design', 'document-diagrams')
-        write('scripts/' + name, complexity_runtime(name, text))
 
     # Only diagram validators referenced by installed guidance are needed.
     validators = set()
@@ -659,9 +660,12 @@ Run `python3 <skill-dir>/scripts/check_svg.py <file.svg>`. Follow the chosen typ
     # Remove only obsolete generated resources, leaving independently maintained SVG assets intact.
     for relative in ['references/animation.md', 'references/export.md', 'references/export-registry.md',
                      'assets/template.html', 'assets/template-motion.html', 'scripts/self_check.py',
-                     'scripts/export_svg.py', 'scripts/export_png.py', 'scripts/verify-motion.py']:
+                     'scripts/export_svg.py', 'scripts/export_png.py', 'scripts/verify-motion.py',
+                     'references/import-drawio.md', 'references/import-mermaid.md',
+                     'references/import-excalidraw.md', 'scripts/drawio_extract.py',
+                     'scripts/mermaid_extract.py', 'scripts/excalidraw_extract.py']:
         (OUT / relative).unlink(missing_ok=True)
-    print('Assembled 45 SVG type references, semantics, layout, importers and structural verifiers.')
+    print('Assembled 45 SVG type references, semantics, layout and structural verifiers.')
 
 
 if __name__ == '__main__':

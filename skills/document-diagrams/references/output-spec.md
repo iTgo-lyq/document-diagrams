@@ -53,7 +53,7 @@ Apply SKILL.md §7 for density. Use labeled zones for useful responsibility or t
 
 ### Simplification
 
-Remove decoration, merge identical replicas, then consider leaf clusters or incidental infrastructure. Preserve distinct behavior, failure paths and trust boundaries. In `faithful`, keep distinct content across detail diagrams if needed. Report merged, collapsed or omitted content in the fidelity ledger (§5).
+Remove decoration, merge identical replicas, then consider leaf clusters or incidental infrastructure. Preserve distinct behavior, failure paths and trust boundaries. In `faithful`, keep distinct content across detail diagrams if needed. Report material grouping or omissions (§5).
 
 ---
 
@@ -80,19 +80,9 @@ Two rules that hold at every audience level:
 - **Never invent detail to fill a slot.** If an input names `svc-04` but provides no explanation, keep the identifier and ask rather than guessing a business name.
 - **Keep the source's vocabulary for proper nouns.** Renaming `Kafka` to `Message Bus` is fine at `executive`; renaming it to `Event Grid` (a different product) is a factual error.
 
-## 5. Fidelity ledger
+## 5. Content coverage
 
-Report merged, collapsed or omitted content after the file path. Short and specific:
-
-```
-Detail: balanced · 18 source nodes → 9 drawn
-Merged:  worker-01..06 → "Ingest Worker ×6"
-Collapsed: "Observability" group (Grafana, Loki, Tempo) → one node
-Dropped: 2 sticky notes, CI pipeline (cross-cutting)
-Kept in full: the request path (Client → Gateway → Orders → Postgres)
-```
-
-The reader of the diagram can't see what's missing. The person who asked for it needs to.
+Report material grouping or omissions alongside the SVG, including which components or relationships they affect.
 
 ---
 
@@ -108,6 +98,6 @@ Run alongside the SKILL.md §9 taste gate.
 - [ ] Detail matches the request; grouping, labels and routes remain readable at the intended size?
 - [ ] Node names, sublabels, and edge labels all at the same audience level?
 - [ ] CJK labels given a font fallback?
-- [ ] Fidelity ledger reported for anything cut?
+- [ ] Material grouping or omissions reported?
 - [ ] Diagram `<svg>` has `role="img"`, resolving `aria-labelledby`, a non-empty first-child `<title>`, a non-empty `<desc>`, and per-diagram/variant prefixed IDs?
 - [ ] Standalone SVG passes XML, accessibility and structural checks?

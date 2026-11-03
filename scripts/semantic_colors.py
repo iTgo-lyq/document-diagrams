@@ -49,17 +49,6 @@ def guidance(name, text):
             (r'Uppercase names \(`X`, `FILL`, `STROKE`\) are geometry and per-node values you compute\.', 'Uppercase geometry names such as `X` are computed per node. Resolve `FILL`, `STROKE` and `TEXT` to its semantic fill, contrast-checked outline and dark text color.'),
             (r'fill="STROKE@0\.8"', 'fill="TEXT"'),
         ],
-        'import-drawio.md': [
-            (r'^\| `#dae8fc` / `#6c8ebf`.*', '| `#dae8fc` / `#6c8ebf` (blue) | generic component | Input/primary for entry points; Processing for services, according to the label |'),
-            (r'^\| `#d5e8d4`.*', '| `#d5e8d4` / `#82b366` (green) | ok / primary path | Data/output/success semantic surface; focal selection is independent |'),
-            (r'^\| `#ffe6cc`.*', '| `#ffe6cc` / `#d79b00` (orange) | attention / queue | Processing/in-progress surface; Warning if the label identifies a risk |'),
-            (r'^\| `#f8cecc`.*', '| `#f8cecc` / `#b85450` (red) | failure / risk / legacy | Sensitive/warning surface for evidenced risk; retain state labels and actual relationship semantics |'),
-            (r'^\| `#e1d5e7`.*', '| `#e1d5e7` / `#9673a6` (purple) | analysis or external / third-party | AI/analysis when supported by content; neutral external context otherwise |'),
-            (r'^\| `#ffffff` / grey.*', '| `#f5f5f5` / grey | infrastructure / background | Semantic role surface for a component; quiet neutral surface for a grouping container |'),
-            (r'^\| no fill \|.*', '| no fill | unstyled | Infer role from the content; use neutral context if unknown |'),
-            (r'Store/State box \(`ink @ 0\.05` fill, `muted` stroke\)', 'Store/State box with the Data/output semantic surface'),
-            (r'The one accent node', 'The focal node, retaining its role color'),
-        ],
         'type-flowchart.md': [
             (r'^- Shape carries type, not color:', '- Shape carries control-flow type; semantic color adds role/status information:'),
             (r'^- Using fill color to signal node type.*', '- Using color alone to signal a decision or terminal. Keep the prescribed shape alongside semantic fills.'),
@@ -175,11 +164,6 @@ def guidance(name, text):
             (r'^\| \*\*focal\*\* \|.*', '| **focal** | Retain level fill | Retain level stroke (1.4) | Dark level text | 600 |'),
             (r'The focal cell can carry a 2nd line.*', 'The focal cell can carry a 2nd line (`sub:`), rendered in dark semantic text at 10px. The level label remains explicit; color is redundant permission information.'),
             (r'Fill and text-color depend on `level` \(or focal flag\)', 'Fill and text-color depend on `level`; focus changes outline weight'),
-        ],
-        'import-excalidraw.md': [
-            (r'one accent plus the ink ramp', 'consistent semantic colors, with focal emphasis chosen separately'),
-            (r'White services, ink-tint store, one accent', 'Role-colored services and stores, with separate focal emphasis'),
-            (r'the design system has one accent', 'map evidenced roles to the semantic palette'),
         ],
         'type-medallion.md': [
             (r'^- If `promotions\[k\]\.to` references a tier with a \*\*`color` override\*\*.*', '- Choose promotion colors by relationship meaning (processing, output or neutral), with a matching marker. Width stays at 1.4 unless focal; lifecycle arrows keep their dash. A tier\'s component color does not automatically recolor its edges.'),

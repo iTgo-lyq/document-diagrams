@@ -1,5 +1,4 @@
 """Validate shipped templates and helpers in an isolated installation."""
-import json
 import os
 from pathlib import Path
 import re
@@ -50,9 +49,11 @@ class RuntimeTests(unittest.TestCase):
 
     def test_output_resources_are_svg_only(self):
         self.assertEqual([p.name for p in (self.skill / 'assets').iterdir()], ['template.svg'])
-        for name in ['export_svg.py', 'export_png.py', 'self_check.py', 'verify-motion.py']:
+        for name in ['export_svg.py', 'export_png.py', 'self_check.py', 'verify-motion.py',
+                     'drawio_extract.py', 'mermaid_extract.py', 'excalidraw_extract.py']:
             self.assertFalse((self.skill / 'scripts' / name).exists())
-        for name in ['animation.md', 'export.md', 'export-registry.md']:
+        for name in ['animation.md', 'export.md', 'export-registry.md',
+                     'import-drawio.md', 'import-mermaid.md', 'import-excalidraw.md']:
             self.assertFalse((self.skill / 'references' / name).exists())
         for document in [self.skill / 'SKILL.md', *(self.skill / 'references').glob('*.md')]:
             self.assertNotIn('<foreignObject', document.read_text(), document.name)
@@ -155,46 +156,6 @@ class RuntimeTests(unittest.TestCase):
             self.assertEqual(coords[0] - source, 5)
             self.assertEqual(target - coords[-1] - extension, 5)
         self.assertEqual(len(paths), 2)
-
-    def test_mermaid_preserves_decision_labels_and_return_path(self):
-        source = self.work / 'flow.mmd'
-        source.write_text('flowchart LR\n A[Request] --> B{Valid?}\n B -->|yes| C[Store]\n B -.->|no| A\n')
-        data = json.loads(self.run_helper('mermaid_extract.py', source, '--json'))
-        diagram = data['diagrams'][0]
-        self.assertEqual(len(diagram['nodes']), 3)
-        self.assertEqual(len(diagram['edges']), 3)
-        self.assertIn('yes', json.dumps(diagram))
-        self.assertIn('no', json.dumps(diagram))
-
-    def test_large_imports_preserve_nodes_and_offer_advisory_density(self):
-        count = 30
-        mermaid = self.work / 'large.mmd'
-        mermaid.write_text('flowchart LR\n' + '\n'.join(f' n{i}[Node {i}]' for i in range(count)))
-        drawio = self.work / 'large.drawio'
-        cells = '<mxCell id="0"/><mxCell id="1" parent="0"/>' + ''.join(
-            f'<mxCell id="n{i}" value="Node {i}" vertex="1" parent="1">'
-            f'<mxGeometry x="{i * 128}" y="40" width="80" height="40" as="geometry"/></mxCell>'
-            for i in range(count))
-        drawio.write_text(f'<mxfile><diagram id="large" name="Large"><mxGraphModel><root>{cells}</root></mxGraphModel></diagram></mxfile>')
-        excalidraw = self.work / 'large.excalidraw'
-        elements = []
-        for i in range(count):
-            elements.extend([
-                {'id': f'n{i}', 'type': 'rectangle', 'x': i * 128, 'y': 40, 'width': 80, 'height': 40},
-                {'id': f'label{i}', 'type': 'text', 'containerId': f'n{i}', 'text': f'Node {i}'},
-            ])
-        excalidraw.write_text(json.dumps({'type': 'excalidraw', 'elements': elements}))
-        cases = [('mermaid_extract.py', mermaid, 'diagrams'),
-                 ('drawio_extract.py', drawio, 'pages'),
-                 ('excalidraw_extract.py', excalidraw, 'scene')]
-        for helper, path, key in cases:
-            with self.subTest(format=key):
-                data = json.loads(self.run_helper(helper, path, '--json'))[key]
-                diagram = data if key == 'scene' else data[0]
-                nodes = [n for n in diagram['nodes'] if n['id'].startswith('n')]
-                self.assertEqual({n['id'] for n in nodes}, {f'n{i}' for i in range(count)})
-                self.assertTrue(diagram['analysis']['over_node_budget'])
-                self.assertIn('advisory', self.run_helper(helper, path))
 
     def test_large_containment_keeps_scope_semantics(self):
         groups = []

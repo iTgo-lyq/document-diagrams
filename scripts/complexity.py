@@ -1,4 +1,4 @@
-"""Technical-diagram density guidance, import hints and structural validation."""
+"""Technical-diagram density guidance and structural validation."""
 import re
 
 
@@ -36,11 +36,6 @@ Per-type guidance: [layout-budget.md](references/layout-budget.md#complexity-bud
 ''' + text[end:]
         text = text.replace("- [ ] Within the type's complexity budget (§7)?",
                             '- [ ] Required content preserved; labels and routes readable at the intended size (§7)?')
-        text = text.replace('budget flags', 'advisory density flags')
-        text = re.sub(r'^\| \*\*Detail\*\*.*$',
-                      '| **Detail** | `faithful` (all distinct components) · `balanced` (relevant components) · `simplified` (capabilities) | `balanced` |', text, flags=re.M)
-        text = re.sub(r'^The size preset sets.*$',
-                      'The size preset sets the `viewBox` and type ramp. Detail selects content; §7 governs density. The §6 connector rules apply at every size.', text, flags=re.M)
 
     elif name == 'layout-budget.md':
         text = re.sub(r'^Routed from.*$', 'Routed from SKILL.md §7. Technical content counts and depth values are planning guides; retain semantic structure, focal limits and quantitative encodings.', text, flags=re.M)
@@ -76,12 +71,16 @@ Apply SKILL.md §7 for density. Use labeled zones for useful responsibility or t
 
 ### Simplification
 
-Remove decoration, merge identical replicas, then consider leaf clusters or incidental infrastructure. Preserve distinct behavior, failure paths and trust boundaries. In `faithful`, keep distinct content across detail diagrams if needed. Report merged, collapsed or omitted content in the fidelity ledger (§5).
+Remove decoration, merge identical replicas, then consider leaf clusters or incidental infrastructure. Preserve distinct behavior, failure paths and trust boundaries. In `faithful`, keep distinct content across detail diagrams if needed. Report material grouping or omissions (§5).
 ''' + text[end:]
         text = text.replace('Detail sets *how many*; audience sets *what they\'re called*.',
                             'Detail selects content; audience sets wording.')
         text = re.sub(r'^Any time output is smaller than input.*$',
                       'Report merged, collapsed or omitted content after the file path. Short and specific:', text, flags=re.M)
+        text = re.sub(r'## 5\. Fidelity ledger.*?(?=\n---)',
+                      '## 5. Content coverage\n\nReport material grouping or omissions alongside the SVG, including which components or relationships they affect.\n', text, flags=re.S)
+        text = text.replace('- [ ] Fidelity ledger reported for anything cut?',
+                            '- [ ] Material grouping or omissions reported?')
         text = text.replace("- [ ] Node count inside the detail level's ceiling?\n- [ ] `faithful` above 9 nodes → zoned, and split above 24?",
                             '- [ ] Detail matches the request; grouping, labels and routes remain readable at the intended size?')
 
@@ -97,19 +96,6 @@ Remove decoration, merge identical replicas, then consider leaf clusters or inci
         text = text.replace('and type-specific limits.', 'and type-specific guidance.')
         text = re.sub(r'^- Apply the stricter of.*$',
                       '- Content counts follow SKILL.md §7; preserve the pattern\'s required semantics, including distinct failure and terminal outcomes.', text, flags=re.M)
-
-    elif name.startswith('import-'):
-        text = text.replace('budget flags', 'advisory density flags')
-        text = re.sub(r"^The digest's `budget:` line.*$",
-                      'The digest flags density for layout review. Assess grouping and routing at the requested size.', text, flags=re.M)
-        text = text.replace("The digest's `budget:` line determines whether the requested combination fits.",
-                            'Digest density flags are advisory; assess readability at the requested size.')
-        text = text.replace("Walk [`output-spec.md` §3](output-spec.md) degrade ladder until you're under the node ceiling. The digest's *collapsible groups* section is step 3 of that ladder, pre-computed.",
-                            'Use [`output-spec.md` §3](output-spec.md) to choose relevant content. The digest suggests collapsible groups; preserve distinct behavior and relationships.')
-        text = text.replace('12 source nodes → 8 drawn, inside the standard §7 budget even at a level that allows 12.',
-                            '12 source nodes → 8 drawn after aggregating incidental detail.')
-        text = re.sub(r'^\| One-to-one node mapping regardless of budget.*$',
-                      '| Crowded redraw with no grouping | Group or split when labels and routes become hard to follow |', text, flags=re.M)
 
     elif name.removeprefix('type-').removesuffix('.md') in TECHNICAL_TYPES:
         # Count recommendations stay near their geometry; emphasis caps stay binding.
@@ -186,12 +172,7 @@ Remove decoration, merge identical replicas, then consider leaf clusters or inci
 
 
 def runtime(name, text):
-    if name.endswith('_extract.py'):
-        text = text.replace('f"- budget: nodes ', 'f"- density review: nodes ')
-        text = text.replace("'OVER' if info['over_node_budget']", "'review' if info['over_node_budget']")
-        text = text.replace("'OVER' if info['over_edge_budget']", "'review' if info['over_edge_budget']")
-        text = text.replace('(max 9)', '(guide 9)').replace('(max 12)', '(guide 12; advisory)')
-    elif name == 'verify-architecture-containment.py':
+    if name == 'verify-architecture-containment.py':
         text = re.sub(r'^MAX_(?:ADMIN|TRAFFIC|NODES) = \d+\n', '', text, flags=re.M)
         start = text.index('    admin_count = sum(')
         end = text.index('    known_scopes = set(scopes)', start)

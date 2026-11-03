@@ -18,9 +18,9 @@
 
 > 使用 $document-diagrams，依据当前项目实现，为“切换身份时如何处理迟到请求”制作一张中文 SVG 图。自行选择适合的表达，保留关键机制与必要条件。
 
-使用中文系统字体、浅色图形和静态展示，支持从 draw.io、Mermaid、Excalidraw 提取内容并重绘为 SVG。不生成 HTML 页面、PNG 或动画播放器。不固定模型和思考强度。
+依据项目材料直接绘制静态 SVG，使用中文系统字体和浅色图形。不生成 HTML 页面、PNG 或动画播放器。不固定模型和思考强度。
 
-解析和结构检查脚本使用 Python 3.10+ 标准库。字体使用系统内置的中文字体回退，不下载网络字体。最终 SVG 仍需在渲染器中检查文字、对比度和实际布局。
+结构检查脚本使用 Python 3.10+ 标准库。字体使用系统内置的中文字体回退，不下载网络字体。最终 SVG 仍需在渲染器中检查文字、对比度和实际布局。
 
 ## 源码与安装目录
 
@@ -28,8 +28,8 @@
 skills/document-diagrams/    可直接安装的完整 skill
   SKILL.md                  使用入口
   agents/openai.yaml        展示信息与默认提示词
-  references/               45 种图形详规、语义、布局、导入和视觉规范
-  scripts/                  独立使用的解析、SVG 与结构检查工具
+  references/               45 种图形详规、语义、布局和视觉规范
+  scripts/                  独立使用的 SVG 与结构检查工具
   assets/template.svg       浅色 SVG 模板
   LICENSE                   版权声明与许可原文
 upstream/                   维护者参考的固定版本源码
@@ -66,13 +66,13 @@ python3 -m unittest discover -s tests -v
 |---|---|
 | 选图路由、45 种类型详规、9 个语义模式 | 保留细则、参数、条件和边界，按需加载 |
 | 类型布局、连线语义、复杂度、可访问性 | 保留图形语义；技术图的内容数量与深度作为布局参考，以目标阅读尺寸的可读性决定分区与拆图，不为凑数省略关键组件和关系 |
-| 导入、保真度清单、SVG 与结构验证 | 保留 SVG 制作相关工作流及所引用的独立脚本 |
+| SVG 与结构验证 | 使用独立脚本检查文件、语义和几何结构 |
 | HTML 页面、PNG 导出、动画控制器、单独的元数据导出 | 不在 SVG 制作范围内；直接编写 SVG，结构追踪信息保留在 SVG 属性中 |
 | diagram-design 配色、字体、暗色、纸纹、海报卡片及品牌配置 | 移除；不带首次样式确认、profile、手绘和终端主题 |
 | svg-diagram 视觉样式 | 取白底、五组浅色语义配色及关系箭头用色、中文系统字体、16/12/10px 基础字号、细描边、圆角及缺口箭头 |
 | svg-diagram 选图、执行流程、输出位置和通用布线政策 | 不引入；图形结构和语义仍由 diagram-design 的规则决定 |
 
-类型示例使用统一视觉角色；配色、字体和 marker 的参数与箭头端点保持一致。解析与结构验证脚本随 skill 安装，文字换行使用原生 SVG `text/tspan`。README 与来源说明位于仓库，版权和许可原文位于 skill 的 LICENSE。
+类型示例使用统一视觉角色；配色、字体和 marker 的参数与箭头端点保持一致。结构验证脚本随 skill 安装，文字换行使用原生 SVG `text/tspan`。README 与来源说明位于仓库，版权和许可原文位于 skill 的 LICENSE。
 
 语义配色按角色重复使用：输入蓝、处理橙、数据绿、分析紫、警告粉。焦点通过轮廓、字重或图形规定的标记突出，数量独立计算。热力图使用单色深浅标尺，蜂群图使用统一非焦点填充，瀑布图用填充／空心区分增减，哑铃图用空心／实心区分端点。验证器按 `data-focal="true"` 识别焦点，Polar 使用 `data-polar-focal`。
 
@@ -87,7 +87,7 @@ git submodule update --init --recursive
 python3 scripts/check.py --source
 ```
 
-固定提交以 Git 中的 submodule 指针为准。`scripts/assemble.py` 按固定来源整理 SVG 制作指导；`scripts/semantic_colors.py` 定义语义用色与焦点识别；`scripts/complexity.py` 定义技术图密度指导、导入提示与架构校验规则。这些工具不随 skill 安装。安装目录中的视觉规范、SVG 模板、`check_svg.py`、展示元信息和许可独立维护，其余内容由整理脚本更新。
+固定提交以 Git 中的 submodule 指针为准。`scripts/assemble.py` 按固定来源整理 SVG 制作指导；`scripts/semantic_colors.py` 定义语义用色与焦点识别；`scripts/complexity.py` 定义技术图密度指导与架构校验规则。这些工具不随 skill 安装。安装目录中的视觉规范、SVG 模板、`check_svg.py`、展示元信息和许可独立维护，其余内容由整理脚本更新。
 
 更新参考版本时先审阅差异，修订整理规则并运行 `python3 scripts/assemble.py`，更新本 README 中的参考版本，再运行完整性检查与图文行为回归。上游指针有意更新后，先暂存该指针再执行 `--source` 检查。普通安装和使用不执行整理脚本，也不需要初始化 submodule。
 
